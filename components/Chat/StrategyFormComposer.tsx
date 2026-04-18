@@ -34,11 +34,13 @@ export function StrategyFormComposer({
   demoMode,
   disabled,
   suggestedAccounts,
+  hasHiringJobs,
   onSubmit
 }: {
   demoMode?: boolean;
   disabled?: boolean;
   suggestedAccounts?: string[];
+  hasHiringJobs?: boolean;
   onSubmit: (strategy: Strategy) => void;
 }) {
   const [step, setStep] = React.useState<'cadence' | 'replies'>('cadence');
@@ -46,6 +48,7 @@ export function StrategyFormComposer({
   const [linkedin, setLinkedin] = React.useState(true);
   const [cadence, setCadence] = React.useState<'daily' | '3x-weekly' | 'weekly'>('3x-weekly');
   const [autoPostX, setAutoPostX] = React.useState(false);
+  const [hiringRatio, setHiringRatio] = React.useState<number>(hasHiringJobs ? 4 : 0);
 
   const normalizedSeed = React.useMemo(() => {
     const seen = new Set<string>();
@@ -96,7 +99,8 @@ export function StrategyFormComposer({
       channels,
       cadence,
       targetReplyAccounts: accounts,
-      autoPostX: demoMode ? false : autoPostX
+      autoPostX: demoMode ? false : autoPostX,
+      hiringRatio: hasHiringJobs ? hiringRatio : 0
     });
   }
 
@@ -148,6 +152,32 @@ export function StrategyFormComposer({
             </SelectContent>
           </Select>
         </div>
+
+        {hasHiringJobs ? (
+          <div className="space-y-1.5">
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">
+              Hiring post frequency
+            </Label>
+            <Select
+              value={String(hiringRatio)}
+              onValueChange={(v) => setHiringRatio(Number(v))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">Off</SelectItem>
+                <SelectItem value="2">Every 2nd post</SelectItem>
+                <SelectItem value="3">Every 3rd post</SelectItem>
+                <SelectItem value="4">Every 4th post</SelectItem>
+                <SelectItem value="5">Every 5th post</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Rotates one hiring post into the feed at this rate.
+            </p>
+          </div>
+        ) : null}
 
         <div className="flex items-center justify-between rounded-md border border-border bg-muted/30 p-2">
           <div className="flex items-center gap-2">

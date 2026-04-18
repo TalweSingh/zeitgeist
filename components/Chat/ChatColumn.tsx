@@ -180,9 +180,14 @@ export function ChatColumn() {
   const handleStrategySubmit = React.useCallback(
     (strategy: Strategy) => {
       setSession((prev) => ({ ...prev, strategy }));
+      const hiringLine =
+        strategy.hiringRatio && strategy.hiringRatio > 0
+          ? `hiring posts=every ${strategy.hiringRatio}th`
+          : 'hiring posts=off';
       const summary = [
         `Strategy set: channels=${strategy.channels.join('+') || 'none'}`,
         `cadence=${strategy.cadence}`,
+        hiringLine,
         `reply accounts=${strategy.targetReplyAccounts.join(', ') || 'none'}`,
         `auto-post X=${strategy.autoPostX ? 'on' : 'off'}`
       ].join('; ');
@@ -231,6 +236,7 @@ export function ChatColumn() {
           demoMode={demoMode}
           disabled={sending}
           suggestedAccounts={session.intake?.xHeroes ?? []}
+          hasHiringJobs={session.jobs.some((j) => j.selected)}
           onSubmit={handleStrategySubmit}
         />
       );
