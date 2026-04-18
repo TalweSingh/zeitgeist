@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useSession } from '@/lib/store/session';
 import type { BrandBrief } from '@/types';
 import { Pencil, Check } from 'lucide-react';
+import { ActivityLog } from '@/components/shared/ActivityLog';
 
 const MAX_REVISIONS = 3;
 
@@ -74,6 +74,29 @@ function draftToBrief(d: Draft, prev: BrandBrief): BrandBrief {
   };
 }
 
+function BrandBriefSynthesizing() {
+  const { session } = useSession();
+  const mountedAtRef = React.useRef<number>(Date.now());
+  const recentLogs = (session.logEvents ?? []).filter(
+    (e) => e.t >= mountedAtRef.current - 1000
+  );
+  return (
+    <div className="h-full overflow-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Brand brief</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ActivityLog
+            events={recentLogs}
+            emptyLabel="synthesizing brand brief…"
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export function BrandBriefCard() {
   const { session, setSession } = useSession();
   const brief = session.brandBrief;
@@ -82,21 +105,7 @@ export function BrandBriefCard() {
   const [draft, setDraft] = React.useState<Draft | null>(null);
 
   if (!brief) {
-    return (
-      <div className="h-full overflow-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Brand brief</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-2">
-            <Skeleton className="h-6 w-1/3" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-2/3" />
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <BrandBriefSynthesizing />;
   }
 
   const exhausted = revisions >= MAX_REVISIONS;

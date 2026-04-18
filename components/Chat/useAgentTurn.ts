@@ -1,9 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import type { Phase, Session, ChatMessage } from '@/types';
+import type { LogEvent, Phase, Session, ChatMessage } from '@/types';
 import { useSession } from '@/lib/store/session';
 import { parseSse } from '@/lib/sse';
+import { describePhaseKickoff, describeToolCall } from '@/lib/agent/toolMessages';
 
 export type AgentTurnResult = {
   advance?: boolean;
@@ -66,7 +67,14 @@ export function useAgentTurn(): UseAgentTurn {
           assistantMsg
         ];
         assistantIdxRef.current = nextMessages.length - 1;
-        return { ...prev, chatMessages: nextMessages };
+        const kickoff = opts?.silent ? describePhaseKickoff(prev.phase) : null;
+        const nextLogs = kickoff
+          ? [
+              ...(prev.logEvents ?? []),
+              { t: Date.now(), level: 'info' as const, message: kickoff }
+            ]
+          : prev.logEvents;
+        return { ...prev, chatMessages: nextMessages, logEvents: nextLogs };
       });
 
       const controller = new AbortController();
@@ -114,6 +122,16 @@ export function useAgentTurn(): UseAgentTurn {
             if (!evt || typeof evt !== 'object') return;
             if (evt.type === 'text' && typeof evt.delta === 'string') {
               appendDelta(evt.delta);
+            } else if (evt.type === 'tool_use' && typeof evt.name === 'string') {
+              const message = describeToolCall(
+                evt.name,
+                (evt.input as Record<string, unknown>) ?? {}
+              );
+              const log: LogEvent = { t: Date.now(), level: 'info', message };
+              setSession((prev) => ({
+                ...prev,
+                logEvents: [...(prev.logEvents ?? []), log]
+              }));
             } else if (evt.type === 'result') {
               result = {
                 advance: !!evt.advance,

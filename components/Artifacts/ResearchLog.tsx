@@ -5,41 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSession } from '@/lib/store/session';
-import { Info, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import type { LogEvent } from '@/types';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { InferredIntakeCard } from './InferredIntakeCard';
-
-function LevelIcon({ level }: { level: LogEvent['level'] }) {
-  if (level === 'ok') return <CheckCircle2 className="h-4 w-4 text-success" />;
-  if (level === 'warn') return <AlertTriangle className="h-4 w-4 text-warning" />;
-  return <Info className="h-4 w-4 text-muted-foreground" />;
-}
-
-function formatTs(t: number) {
-  try {
-    const d = new Date(t);
-    return d.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  } catch {
-    return '';
-  }
-}
+import { ActivityLog } from '@/components/shared/ActivityLog';
 
 export function ResearchLog() {
   const { session } = useSession();
   const logEvents = session.logEvents ?? [];
   const scraped = session.scrapedData;
-  const scrollRef = React.useRef<HTMLDivElement | null>(null);
   const [rawOpen, setRawOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [logEvents.length]);
 
   const pages = React.useMemo(
     () => scraped?.companyPages ?? [],
@@ -72,42 +46,10 @@ export function ResearchLog() {
             <CardTitle>Research</CardTitle>
           </CardHeader>
           <CardContent>
-            <div
-              ref={scrollRef}
-              className="flex max-h-80 flex-col gap-1.5 overflow-auto rounded-md border border-border bg-muted/40 p-3"
-            >
-              {logEvents.length === 0 ? (
-                <span className="font-mono text-sm text-muted-foreground">
-                  Waiting for research to start…
-                </span>
-              ) : (
-                logEvents.map((ev, i) => (
-                  <div
-                    key={`${ev.t}-${i}`}
-                    className="flex items-start gap-2 font-mono text-sm"
-                  >
-                    <span className="mt-0.5 shrink-0 text-xs text-muted-foreground">
-                      {formatTs(ev.t)}
-                    </span>
-                    <span className="mt-0.5 shrink-0">
-                      <LevelIcon level={ev.level} />
-                    </span>
-                    <span
-                      className={cn(
-                        'whitespace-pre-wrap break-words',
-                        ev.level === 'warn'
-                          ? 'text-warning'
-                          : ev.level === 'ok'
-                            ? 'text-foreground'
-                            : 'text-muted-foreground'
-                      )}
-                    >
-                      {ev.message}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
+            <ActivityLog
+              events={logEvents}
+              emptyLabel="Waiting for research to start…"
+            />
           </CardContent>
         </Card>
 
