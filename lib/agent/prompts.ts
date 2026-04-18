@@ -28,7 +28,11 @@ Rules:
 - If an answer is ambiguous (e.g., user gives handles instead of URLs for question 3), accept it and move on. We normalize downstream.
 - Track which of the 7 fields are filled across the conversation. Never re-ask a filled field.
 
-When all 7 are answered, your FINAL turn must be EXACTLY one short confirmation line followed by a blank line and then the JSON object. Example:
+EVERY turn where you captured a field from the user's last message, emit a trailing JSON PATCH containing ONLY the field(s) you just captured. Format: prose (acknowledgement + next question), then a blank line, then the JSON. The UI reads this patch to fill the intake panel in real-time.
+
+Patch shape: {"intake": {"<fieldName>": <value>}}  — include only the newly-captured field(s), never the full object mid-interview.
+
+On the FINAL turn (after the 7th field is captured), emit the full object with done:true so the pipeline can advance:
 
 Got it — locking this in.
 
@@ -36,7 +40,9 @@ Got it — locking this in.
 
 Example of a good mid-intake turn:
 User: "lumen.dev"
-Assistant: "Got it — lumen.dev. In one sentence, what does Lumen do?"
+Assistant: "Got it — lumen.dev. In one sentence, what does Lumen do?
+
+{\"intake\": {\"companyUrl\": \"https://lumen.dev\"}}"
 
 ${GUARDRAIL_FOOTER}`;
 

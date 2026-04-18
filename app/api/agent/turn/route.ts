@@ -153,8 +153,12 @@ function computePatch(
 
   switch (phase) {
     case 'intake': {
-      if (obj.done && obj.intake) {
-        return { intake: obj.intake as Partial<Intake> };
+      if (obj.intake && typeof obj.intake === 'object') {
+        const merged: Partial<Intake> = {
+          ...(currentSession.intake ?? {}),
+          ...(obj.intake as Partial<Intake>)
+        };
+        return { intake: merged };
       }
       return {};
     }
