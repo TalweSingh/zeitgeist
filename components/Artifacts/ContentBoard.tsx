@@ -166,6 +166,7 @@ export function ContentBoard() {
           </TabsContent>
 
           <TabsContent value="brand" className="flex flex-col gap-4">
+            <BrandIdentityBanner />
             <BrandBriefCard />
           </TabsContent>
         </Tabs>
@@ -242,6 +243,41 @@ function ScheduleRow({ draft, date }: { draft: Draft; date: Date }) {
         }
       >
         <DraftCard draft={draft} />
+      </div>
+    </div>
+  );
+}
+
+function BrandIdentityBanner() {
+  function requestRework() {
+    window.dispatchEvent(new CustomEvent('brand:rework'));
+  }
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-accent/50 bg-gradient-to-br from-accent/20 via-accent/5 to-background p-5">
+      <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/20 blur-3xl" />
+      <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="inline-flex w-fit items-center gap-1 rounded-full bg-accent/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-foreground">
+            <Sparkles className="h-3 w-3" />
+            Living brand identity
+          </div>
+          <h3 className="text-base font-semibold text-foreground">
+            Your brand doesn’t stay still — <span className="text-accent-foreground">neither does this</span>.
+          </h3>
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Positioning, voice, pillars and no-go list are all editable. Rework
+            them any time as your product, audience, or market shifts — every
+            future draft and reply will respect the new brief automatically.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={requestRework}
+          className="inline-flex items-center gap-1.5 rounded-md border border-accent/60 bg-accent/20 px-4 py-2 text-sm font-semibold text-accent-foreground shadow-sm transition hover:bg-accent/30"
+        >
+          <Sparkles className="h-4 w-4" />
+          Rework brand identity
+        </button>
       </div>
     </div>
   );

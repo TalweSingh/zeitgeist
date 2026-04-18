@@ -115,6 +115,118 @@
       "body": "We're excited to announce some exciting updates to our platform! Stay tuned for more info.",
       "metrics": { "impressions": 2140, "likes": 6, "reposts": 0, "replies": 0, "bookmarks": 1 },
       "notes": "flopped: teaser with no content, no specificity, no reason to care."
+    },
+    {
+      "id": "cl-h11",
+      "channel": "x",
+      "weekOf": "2026-02-23",
+      "body": "A seed-stage founder told us last week: 'I spent 11 hours on LinkedIn Recruiter and got 3 replies, 0 interviews.' We ran the same role through Clera on a Tuesday. 4 warm Slack intros by Thursday. The math on cold outreach stopped working around 2019.",
+      "metrics": { "impressions": 58210, "likes": 694, "reposts": 112, "replies": 58, "bookmarks": 248 },
+      "notes": "won on the hook: exact hours + zero-outcome contrast before any pitch."
+    },
+    {
+      "id": "cl-h12",
+      "channel": "x",
+      "weekOf": "2026-02-23",
+      "body": "Our team is passionate about building the future of hiring. We believe technology can change lives 🚀",
+      "metrics": { "impressions": 2820, "likes": 11, "reposts": 1, "replies": 0, "bookmarks": 2 },
+      "notes": "flopped: 'we believe' corporate copy with zero artifact."
+    },
+    {
+      "id": "cl-h13",
+      "channel": "x",
+      "weekOf": "2026-03-02",
+      "body": "The average eng hire at a YC seed company takes 53 days from first email to signed offer. On Clera last month the median was 14 days. We didn't make candidates faster — we deleted the parts of the process that were wasting their time.",
+      "metrics": { "impressions": 64140, "likes": 738, "reposts": 131, "replies": 66, "bookmarks": 271 },
+      "notes": "won on the hook: 53 vs 14 days, specific cohort."
+    },
+    {
+      "id": "cl-h14",
+      "channel": "x",
+      "weekOf": "2026-03-02",
+      "body": "Tips for your job search in 2026: 1) Network 2) Update your LinkedIn 3) Customize your resume 4) Stay positive!",
+      "metrics": { "impressions": 3640, "likes": 9, "reposts": 0, "replies": 2, "bookmarks": 1 },
+      "notes": "flopped: generic listicle, zero proprietary signal."
+    },
+    {
+      "id": "cl-h15",
+      "channel": "x",
+      "weekOf": "2026-03-09",
+      "body": "An engineer applied to 62 jobs last fall with a public GitHub that had shipped 4 production AI projects. She heard back from 2. Her first week on Clera: 3 intros, 1 offer, 0 resume uploads. The filter was never her — it was the interface.",
+      "metrics": { "impressions": 71420, "likes": 824, "reposts": 158, "replies": 79, "bookmarks": 301 },
+      "notes": "won on the hook: story-shaped, concrete artifact (GitHub), 62→2 contrast."
+    },
+    {
+      "id": "cl-h16",
+      "channel": "x",
+      "weekOf": "2026-03-09",
+      "body": "Excited to share that we've been working hard on some great things behind the scenes. More updates coming soon!",
+      "metrics": { "impressions": 1980, "likes": 5, "reposts": 0, "replies": 0, "bookmarks": 0 },
+      "notes": "flopped: coming-soon teaser, zero reason to engage."
+    },
+    {
+      "id": "cl-h17",
+      "channel": "x",
+      "weekOf": "2026-03-16",
+      "body": "Hiring managers: the average time you spend on a resume is 7 seconds. The average time a candidate spent writing it is 47 minutes. That ratio is the entire reason resumes are a broken interface. We replaced it with a 2-minute conversation on the candidate side and a 30-second brief on yours.",
+      "metrics": { "impressions": 66890, "likes": 782, "reposts": 144, "replies": 71, "bookmarks": 289 },
+      "notes": "won on the hook: 7s vs 47min ratio reframe before the product pitch."
+    },
+    {
+      "id": "cl-h18",
+      "channel": "x",
+      "weekOf": "2026-03-16",
+      "body": "Hiring is hard. But with the right tools and process, you can find great talent. Message us to learn more.",
+      "metrics": { "impressions": 4210, "likes": 13, "reposts": 1, "replies": 0, "bookmarks": 2 },
+      "notes": "flopped: truism + vague CTA, zero specificity."
+    },
+    {
+      "id": "cl-h19",
+      "channel": "linkedin",
+      "weekOf": "2026-02-23",
+      "body": "A founder I talked to this week had rejected 340 candidates through their ATS in the last 90 days. When I asked her how many she had actually talked to, the answer was 7. The system is doing the rejecting, not the person. And the system is wrong most of the time.",
+      "metrics": { "impressions": 44120, "likes": 612, "reposts": 84, "replies": 52, "bookmarks": 238 },
+      "notes": "won on the hook: 340 vs 7 contrast framing the indictment."
+    },
+    {
+      "id": "cl-h20",
+      "channel": "linkedin",
+      "weekOf": "2026-03-09",
+      "body": "An engineer we placed in January shared her numbers with us last week: 8 days from signup to first intro. 22 days from signup to signed offer. $31k/yr above her previous comp. Zero cover letters, zero takehomes, zero 'tell me about yourself' loops. Job search as a product is possible. We're just the ones who built it.",
+      "metrics": { "impressions": 48260, "likes": 672, "reposts": 92, "replies": 57, "bookmarks": 254 },
+      "notes": "won on the hook: stacked numeric outcomes in the first three sentences."
+    },
+    {
+      "id": "cl-h21",
+      "channel": "linkedin",
+      "weekOf": "2026-03-16",
+      "body": "We surveyed 180 engineers who went through a hiring process in Q1. 74% said 'the ghosting' was the single worst part. Not the comp, not the interviews — the silence. We made ghosting structurally impossible on Clera: every candidate hears back inside 72h, with a real reason. It's the smallest promise in recruiting and the hardest one to keep.",
+      "metrics": { "impressions": 51840, "likes": 724, "reposts": 108, "replies": 64, "bookmarks": 281 },
+      "notes": "won on the hook: N=180, 74% stat + emotional reframe before the mechanism."
+    },
+    {
+      "id": "cl-h22",
+      "channel": "linkedin",
+      "weekOf": "2026-04-13",
+      "body": "Our hiring manager NPS hit 71 last month. That's higher than most enterprise SaaS tools. It's not because we're selling a fancy UI — it's because we replaced 'please review these 47 resumes' with 'here are 3 people who already said yes.' Attention is the product.",
+      "metrics": { "impressions": 39210, "likes": 548, "reposts": 74, "replies": 43, "bookmarks": 218 },
+      "notes": "won on the hook: NPS 71 benchmark + attention-as-product thesis."
+    },
+    {
+      "id": "cl-h23",
+      "channel": "x",
+      "weekOf": "2026-04-13",
+      "body": "Shipped a small thing yesterday: if a hiring manager doesn't reply to a candidate within 48h, the channel auto-nudges them and the candidate sees a live 'SLA missed' indicator. Transparency kills ghosting faster than any reminder email we've ever written.",
+      "metrics": { "impressions": 45120, "likes": 578, "reposts": 89, "replies": 41, "bookmarks": 204 },
+      "notes": "won on the hook: 'shipped' + specific SLA mechanism, builder-voice."
+    },
+    {
+      "id": "cl-h24",
+      "channel": "x",
+      "weekOf": "2026-04-13",
+      "body": "Unpopular take: if your pipeline is 70% inbound applicants, you don't have a pipeline, you have a lottery. Build the top of funnel on purpose or keep paying recruiter fees forever.",
+      "metrics": { "impressions": 53480, "likes": 647, "reposts": 104, "replies": 58, "bookmarks": 234 },
+      "notes": "won on the hook: 'unpopular take' frame + 70% lottery reframe."
     }
   ],
   "replies": [
@@ -165,6 +277,102 @@
       "reply": "Confirms every data point on our side: candidates whose hiring manager replies in <2h on Clera accept 3.1x more often than the >48h cohort. Speed is the offer letter.",
       "postedDaysAgo": 8,
       "metrics": { "impressions": 16480, "likes": 219, "replies": 9, "reposts": 8, "profileClicks": 124 }
+    },
+    {
+      "id": "cl-r7",
+      "target": "@levie",
+      "targetPost": "The average tech resume gets 7 seconds of recruiter attention. Somehow we built an entire industry around optimizing for 7 seconds. Wild.",
+      "reply": "The craziest part is candidates spend ~47 minutes writing that resume. A 400x attention asymmetry. We redesigned the whole thing as a 2-minute conversation on the candidate side and a 30-second brief on the hiring side — suddenly the ratio looks reasonable.",
+      "postedDaysAgo": 1,
+      "metrics": { "impressions": 28410, "likes": 402, "replies": 22, "reposts": 17, "profileClicks": 261 }
+    },
+    {
+      "id": "cl-r8",
+      "target": "@paulg",
+      "targetPost": "A job application is a low-bandwidth channel trying to carry a high-bandwidth signal. Of course it fails.",
+      "reply": "We replaced the application with a Slack channel on day 1 and activation jumped 31%. Bandwidth matches signal, offers close faster, both sides are happier. The form field was the bug.",
+      "postedDaysAgo": 2,
+      "metrics": { "impressions": 33140, "likes": 481, "replies": 29, "reposts": 24, "profileClicks": 318 }
+    },
+    {
+      "id": "cl-r9",
+      "target": "@paulg",
+      "targetPost": "If a founder tells me they found their CTO on LinkedIn, I assume they will find their Series A lead on LinkedIn. They will not.",
+      "reply": "The four founding CTOs we placed this quarter came from: a Discord DM, a Twitter reply, a YC alum intro, and a shared Slack. Zero from LinkedIn InMail. The channel is the filter.",
+      "postedDaysAgo": 3,
+      "metrics": { "impressions": 24120, "likes": 328, "replies": 14, "reposts": 18, "profileClicks": 192 }
+    },
+    {
+      "id": "cl-r10",
+      "target": "@rauchg",
+      "targetPost": "Engineers who ship within 48 hours of joining are 3x more likely to still be at the company 2 years later. Hire for commit cadence, not credentials.",
+      "reply": "Every founding hire we've placed on Clera shipped a real PR in week 1. It's not a coincidence — it's because the intro itself includes a live project scope, not a JD. Commit cadence starts before the offer letter.",
+      "postedDaysAgo": 4,
+      "metrics": { "impressions": 19840, "likes": 284, "replies": 12, "reposts": 11, "profileClicks": 148 }
+    },
+    {
+      "id": "cl-r11",
+      "target": "@rauchg",
+      "targetPost": "The interview loop is a lossy compression of who someone actually is. Work trials are lossless. Trade 4 hours of interviews for 4 hours of real work every time.",
+      "reply": "We default every match on Clera to a 4-hour paid trial instead of a whiteboard loop. Close rate jumped from 38% to 61%. Lossy compression discards the signal you're actually trying to hire for.",
+      "postedDaysAgo": 6,
+      "metrics": { "impressions": 21120, "likes": 301, "replies": 13, "reposts": 14, "profileClicks": 176 }
+    },
+    {
+      "id": "cl-r12",
+      "target": "Jason Lemkin",
+      "targetPost": "Startup hiring data nobody wants to admit: the candidate who takes 48 hours to respond to your intro email has a 70% lower close rate than the one who replies in 2. Speed is a signal.",
+      "reply": "We track this exact metric on Clera and it holds. Candidates who reply in <2h close at 54%, the 48h+ cohort at 16%. The speed isn't urgency — it's alignment.",
+      "postedDaysAgo": 3,
+      "metrics": { "impressions": 18210, "likes": 247, "replies": 11, "reposts": 8, "profileClicks": 132 }
+    },
+    {
+      "id": "cl-r13",
+      "target": "Jason Lemkin",
+      "targetPost": "If you're a seed-stage founder and your first engineering hire came from LinkedIn InMail, I have bad news. Your next 3 should come from someone's direct introduction. Cold outreach at seed stage is an anti-pattern.",
+      "reply": "Ran this thesis as a product for a year. Seed founders who used direct intros on Clera for their first 3 hires had 2.1x higher retention at 12 months vs founders who used cold LI outreach. The channel predicts the outcome.",
+      "postedDaysAgo": 5,
+      "metrics": { "impressions": 15620, "likes": 212, "replies": 9, "reposts": 7, "profileClicks": 114 }
+    },
+    {
+      "id": "cl-r14",
+      "target": "Nikita Bier",
+      "targetPost": "The best engineers I know got their last three jobs via DM, Slack, and a single warm intro. Zero applications. If your hiring pipeline requires cold resumes, you already lost.",
+      "reply": "This is verbatim our product strategy. 94% of placements on Clera come through a Slack channel, not an application. We kept the 'apply' button around for a month and nobody used it — so we deleted it.",
+      "postedDaysAgo": 7,
+      "metrics": { "impressions": 23470, "likes": 318, "replies": 16, "reposts": 12, "profileClicks": 201 }
+    },
+    {
+      "id": "cl-r15",
+      "target": "Nikita Bier",
+      "targetPost": "Recruiters who forward 47 resumes with no commentary are getting replaced by a function call. The job is synthesis, not forwarding.",
+      "reply": "Every brief we send on Clera is one paragraph of synthesis per candidate: what they've shipped, why it maps to this role, what they'd turn down. Hiring managers reply 4.2x faster than to raw resumes. Synthesis is the job.",
+      "postedDaysAgo": 9,
+      "metrics": { "impressions": 17840, "likes": 241, "replies": 10, "reposts": 9, "profileClicks": 138 }
+    },
+    {
+      "id": "cl-r16",
+      "target": "First Round Review",
+      "targetPost": "A breakdown of 12 seed-stage hiring funnels. The ones that worked shared one pattern: no ATS. A shared Slack channel with the candidate from day 1. Read that again.",
+      "reply": "We benchmarked 40 seed-stage funnels on Clera this year. Median time-to-offer for ATS-based was 41 days. Shared-Slack was 12. No other variable came close. The ATS is a speed tax.",
+      "postedDaysAgo": 6,
+      "metrics": { "impressions": 19420, "likes": 258, "replies": 11, "reposts": 10, "profileClicks": 147 }
+    },
+    {
+      "id": "cl-r17",
+      "target": "First Round Review",
+      "targetPost": "Your job post is a landing page. Conversion rate matters. If your best candidate reads the first line and thinks 'corporate,' they're gone before paragraph 2.",
+      "reply": "A/B tested 120 JDs on Clera last quarter. Opening line 'We're a small team shipping X for Y' outperformed 'At [Company], we believe...' by 3.4x on click-through. The first 9 words do all the work.",
+      "postedDaysAgo": 10,
+      "metrics": { "impressions": 14210, "likes": 189, "replies": 8, "reposts": 7, "profileClicks": 104 }
+    },
+    {
+      "id": "cl-r18",
+      "target": "@levie",
+      "targetPost": "If your recruiting funnel is 'post JD, wait, filter 400 resumes, ghost 397,' you don't have a recruiting funnel. You have a customer service failure.",
+      "reply": "Founders tell us the resume-filter loop felt like outsourced judgment they hated owning. On Clera they get 3 synthesized briefs. Zero ghosting, because there are never 400 to ghost. Problem disappears at the design layer.",
+      "postedDaysAgo": 1,
+      "metrics": { "impressions": 26180, "likes": 361, "replies": 19, "reposts": 14, "profileClicks": 224 }
     }
   ]
 }

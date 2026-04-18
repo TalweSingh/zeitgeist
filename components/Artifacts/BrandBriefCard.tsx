@@ -104,6 +104,16 @@ export function BrandBriefCard() {
   const [revisions, setRevisions] = React.useState(0);
   const [draft, setDraft] = React.useState<Draft | null>(null);
 
+  React.useEffect(() => {
+    function onRework() {
+      if (!session.brandBrief) return;
+      setDraft(briefToDraft(session.brandBrief));
+      setEditing(true);
+    }
+    window.addEventListener('brand:rework', onRework);
+    return () => window.removeEventListener('brand:rework', onRework);
+  }, [session.brandBrief]);
+
   if (!brief) {
     return <BrandBriefSynthesizing />;
   }

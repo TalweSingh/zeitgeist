@@ -61,14 +61,20 @@ export function useAgentTurn(): UseAgentTurn {
       const assistantIdxRef: { current: number } = { current: -1 };
 
       // Append user message + empty assistant placeholder up front.
-      // On silent turns, skip BOTH — progress is shown via the activity log
-      // in the artifact panel; we don't want raw JSON/preambles in the chat.
+      // On silent turns, skip BOTH and emit a short system one-liner so the
+      // chat column still reflects what's happening; the detailed activity
+      // log lives in the artifact panel.
       setSession((prev) => {
+        const kickoff = silent ? describePhaseKickoff(prev.phase) : null;
+        const chatKickoff: ChatMessage | null = kickoff
+          ? { role: 'system', content: kickoff }
+          : null;
         const nextMessages = silent
-          ? prev.chatMessages
+          ? chatKickoff
+            ? [...prev.chatMessages, chatKickoff]
+            : prev.chatMessages
           : [...prev.chatMessages, userMsg, assistantMsg];
         assistantIdxRef.current = silent ? -1 : nextMessages.length - 1;
-        const kickoff = silent ? describePhaseKickoff(prev.phase) : null;
         const nextLogs = kickoff
           ? [
               ...(prev.logEvents ?? []),
