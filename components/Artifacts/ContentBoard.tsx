@@ -10,9 +10,11 @@ import { ContentBoardProvider } from './ContentBoardContext';
 import { LoopHeader } from './LoopHeader';
 import { FindingsPanel } from './FindingsPanel';
 import { BrandBriefCard } from './BrandBriefCard';
+import { AnalyticsPanel } from './AnalyticsPanel';
+import { RepliesPanel } from './RepliesPanel';
 import { ActivityLog } from '@/components/shared/ActivityLog';
 import type { Draft, Strategy } from '@/types';
-import { LayoutDashboard, Sparkles, Briefcase } from 'lucide-react';
+import { LayoutDashboard, Sparkles, Briefcase, BarChart3, MessagesSquare } from 'lucide-react';
 
 function stepDaysFor(cadence: Strategy['cadence'] | undefined): number {
   if (cadence === 'daily') return 1;
@@ -71,6 +73,14 @@ export function ContentBoard() {
             <TabsTrigger value="dashboard" className="gap-1.5">
               <LayoutDashboard className="h-3.5 w-3.5" />
               Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-1.5">
+              <BarChart3 className="h-3.5 w-3.5" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="replies" className="gap-1.5">
+              <MessagesSquare className="h-3.5 w-3.5" />
+              Replies
             </TabsTrigger>
             <TabsTrigger value="brand" className="gap-1.5">
               <Sparkles className="h-3.5 w-3.5" />
@@ -145,6 +155,14 @@ export function ContentBoard() {
                 <LearningsSidebar />
               </aside>
             </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="flex flex-col gap-4">
+            <AnalyticsPanel />
+          </TabsContent>
+
+          <TabsContent value="replies" className="flex flex-col gap-4">
+            <RepliesPanel />
           </TabsContent>
 
           <TabsContent value="brand" className="flex flex-col gap-4">
