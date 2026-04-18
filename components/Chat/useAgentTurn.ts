@@ -75,9 +75,15 @@ export function useAgentTurn(): UseAgentTurn {
       let result: AgentTurnResult | null = null;
 
       try {
-        const sessionForTurn: Session = opts?.sessionOverride
+        const baseSession = opts?.sessionOverride
           ? ({ ...sessionRef.current, ...opts.sessionOverride } as Session)
           : sessionRef.current;
+        // Strip preseeded messages before sending — they're UI-only context
+        // and must not appear in the API history (Anthropic requires user-first turns).
+        const sessionForTurn: Session = {
+          ...baseSession,
+          chatMessages: baseSession.chatMessages.filter((m) => !m.meta?.preseeded)
+        };
 
         const res = await fetch('/api/agent/turn', {
           method: 'POST',
