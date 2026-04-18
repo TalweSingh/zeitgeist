@@ -42,7 +42,35 @@ function fitTextColor(score: number) {
 }
 
 export function DraftCard({ draft }: { draft: Draft }) {
-  const { setSession } = useSession();
+  const { session, setSession } = useSession();
+  const hiringJob =
+    draft.kind === 'hiring' && draft.jobId
+      ? session.jobs.find((j) => j.id === draft.jobId) ?? null
+      : null;
+  const existingFeedback =
+    draft.kind === 'hiring' && draft.jobId
+      ? session.hiringFeedback?.[draft.jobId] ?? []
+      : [];
+  const [feedbackOpen, setFeedbackOpen] = React.useState(false);
+  const [feedbackDraft, setFeedbackDraft] = React.useState('');
+  const [feedbackSaved, setFeedbackSaved] = React.useState(false);
+
+  function saveFeedback() {
+    const text = feedbackDraft.trim();
+    if (!text || !draft.jobId) return;
+    const jobId = draft.jobId;
+    setSession((prev) => {
+      const prior = prev.hiringFeedback ?? {};
+      const list = prior[jobId] ?? [];
+      return {
+        ...prev,
+        hiringFeedback: { ...prior, [jobId]: [...list, text] }
+      };
+    });
+    setFeedbackDraft('');
+    setFeedbackSaved(true);
+    setTimeout(() => setFeedbackSaved(false), 2000);
+  }
   const {
     selectedLearningIdx,
     setSelectedLearningIdx,
@@ -150,17 +178,26 @@ export function DraftCard({ draft }: { draft: Draft }) {
         highlightState === 'dimmed' && 'opacity-50'
       )}
     >
+      {draft.kind === 'hiring' ? (
+        <div className="-mx-4 -mt-4 mb-1 flex items-center gap-2 rounded-t-lg border-b border-accent/40 bg-accent/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-accent-foreground">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
+          Hiring
+          {hiringJob ? (
+            <span className="truncate text-foreground/80 normal-case tracking-normal">
+              — {hiringJob.title}
+              {hiringJob.location ? (
+                <span className="text-muted-foreground"> · {hiringJob.location}</span>
+              ) : null}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-1.5 text-muted-foreground">
           <ChannelIcon className="h-4 w-4" />
           <span className="text-xs uppercase tracking-wide">
             {draft.channel === 'x' ? 'X' : 'LinkedIn'}
           </span>
-          {draft.kind === 'hiring' ? (
-            <Badge variant="outline" className="ml-1 text-[10px]">
-              Hiring
-            </Badge>
-          ) : null}
         </div>
         <div className="flex items-center gap-1.5">
           {!editing ? (
@@ -361,6 +398,66 @@ export function DraftCard({ draft }: { draft: Draft }) {
 
       {publishError ? (
         <div className="text-xs text-destructive">{publishError}</div>
+      ) : null}
+
+      {draft.kind === 'hiring' && draft.jobId ? (
+        <div className="flex flex-col gap-1.5">
+          <button
+            type="button"
+            onClick={() => setFeedbackOpen((v) => !v)}
+            className={cn(
+              'flex items-center justify-between rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-all duration-200 hover:border-accent/60 hover:text-accent-foreground',
+              feedbackOpen && 'border-accent/60 bg-accent/5 text-accent-foreground'
+            )}
+          >
+            <span>
+              Feedback for this role
+              {existingFeedback.length > 0 ? (
+                <span className="ml-1 text-muted-foreground">
+                  ({existingFeedback.length})
+                </span>
+              ) : null}
+            </span>
+            {feedbackOpen ? (
+              <ChevronUp className="h-3 w-3" />
+            ) : (
+              <ChevronDown className="h-3 w-3" />
+            )}
+          </button>
+          {feedbackOpen ? (
+            <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-2">
+              {existingFeedback.length > 0 ? (
+                <ul className="flex flex-col gap-1 text-[11px] text-foreground/80">
+                  {existingFeedback.map((f, i) => (
+                    <li key={i} className="rounded bg-background/60 px-2 py-1">
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              <textarea
+                value={feedbackDraft}
+                onChange={(e) => setFeedbackDraft(e.target.value)}
+                placeholder="e.g. emphasize remote-friendly, soften the tone, link to our handbook…"
+                className="min-h-[64px] w-full resize-y rounded-md border border-border bg-background p-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-muted-foreground">
+                  Saved with this role — future hiring posts will use it.
+                </span>
+                <Button
+                  size="sm"
+                  className="h-7 gap-1 px-2 text-xs"
+                  onClick={saveFeedback}
+                  disabled={!feedbackDraft.trim()}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  {feedbackSaved ? 'Saved' : 'Save feedback'}
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

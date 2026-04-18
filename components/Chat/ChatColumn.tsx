@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { ChatMessage, Intake, Strategy } from '@/types';
+import type { Strategy } from '@/types';
 import { useSession } from '@/lib/store/session';
 import { useDemoMode } from '@/lib/store/demoMode';
 import { PhasePill } from './PhasePill';
@@ -109,37 +109,6 @@ export function ChatColumn() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.phase, session.drafts]);
-
-  const handleUseLumen = React.useCallback(async () => {
-    if (demoLoading) return;
-    setDemoLoading(true);
-    try {
-      const res = await fetch('/data/example-intake.json');
-      const intake = (await res.json()) as Intake;
-      setDemoMode(true);
-      const sysMsg: ChatMessage = {
-        role: 'system',
-        content: '→ Loaded Lumen demo intake. Starting research with cached data.'
-      };
-      setSession((prev) => ({
-        ...prev,
-        intake: { ...prev.intake, ...intake },
-        phase: 'research',
-        chatMessages: [...prev.chatMessages, sysMsg]
-      }));
-      await research.start({ demo: true, target: 'lumen' });
-    } catch (e) {
-      setSession((prev) => ({
-        ...prev,
-        chatMessages: [
-          ...prev.chatMessages,
-          { role: 'system', content: 'Failed to load demo intake.' }
-        ]
-      }));
-    } finally {
-      setDemoLoading(false);
-    }
-  }, [demoLoading, research, setDemoMode, setSession]);
 
   const handleUseClera = React.useCallback(async () => {
     if (demoLoading) return;
@@ -295,7 +264,6 @@ export function ChatColumn() {
         <div className="border-b border-border p-4">
           <OnboardingCard
             onUseClera={handleUseClera}
-            onUseLumen={handleUseLumen}
             demoLoading={demoLoading}
           />
         </div>
@@ -329,14 +297,6 @@ export function ChatColumn() {
               className="rounded-md border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent-foreground hover:bg-accent/20"
             >
               {demoLoading ? 'Loading…' : 'Try Clera'}
-            </button>
-            <button
-              type="button"
-              onClick={handleUseLumen}
-              disabled={demoLoading}
-              className="rounded-md border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            >
-              {demoLoading ? 'Loading…' : 'Lumen'}
             </button>
           </div>
         ) : null}

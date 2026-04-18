@@ -6,11 +6,9 @@ import { Sparkles, ArrowRight } from 'lucide-react';
 
 export function OnboardingCard({
   onUseClera,
-  onUseLumen,
   demoLoading
 }: {
   onUseClera: () => void;
-  onUseLumen?: () => void;
   demoLoading?: boolean;
 }) {
   return (
@@ -39,22 +37,10 @@ export function OnboardingCard({
           </span>
           <ArrowRight className="h-4 w-4" />
         </Button>
-        {onUseLumen ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-center text-xs text-muted-foreground"
-            onClick={onUseLumen}
-            disabled={demoLoading}
-          >
-            or run the Lumen example
-          </Button>
-        ) : null}
+        <p className="text-center text-xs text-muted-foreground">
+          or type your own URL
+        </p>
       </div>
-
-      <p className="mt-3 text-[11px] leading-snug text-muted-foreground">
-        Or type your company URL to start a fresh interview.
-      </p>
     </div>
   );
 }

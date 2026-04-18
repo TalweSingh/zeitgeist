@@ -55,6 +55,7 @@ export type Strategy = {
   cadence: string;
   targetReplyAccounts: string[];
   autoPostX: boolean;
+  hiringRatio?: number; // 0 = off; otherwise every Nth post is a hiring post
 };
 
 export type Draft = {
@@ -122,4 +123,5 @@ export type Session = {
   logEvents: LogEvent[];
   inferredIntake?: InferredIntake;
   inferredApproved?: boolean;
+  hiringFeedback?: Record<string, string[]>;
 };

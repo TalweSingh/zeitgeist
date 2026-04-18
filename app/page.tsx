@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { RotateCcw, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import { Key, RotateCcw, Sparkles } from 'lucide-react';
 import { useSession } from '@/lib/store/session';
 import { useDemoMode } from '@/lib/store/demoMode';
 import { IntakeBuilder } from '@/components/Artifacts/IntakeBuilder';
@@ -89,6 +90,14 @@ export default function HomePage() {
             <RotateCcw className="h-3.5 w-3.5" />
             Reset
           </button>
+          <Link
+            href="/settings"
+            title="API keys"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          >
+            <Key className="h-3.5 w-3.5" />
+            Settings
+          </Link>
         </div>
       </header>
       <main className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden md:grid-cols-[420px_1fr]">
