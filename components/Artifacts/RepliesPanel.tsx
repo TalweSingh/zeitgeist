@@ -3,15 +3,9 @@
 import * as React from 'react';
 import { useSession } from '@/lib/store/session';
 import { Heart, MessageCircle, Repeat2, Eye, ExternalLink } from 'lucide-react';
+import type { ReplyActivity } from '@/types';
 
-type ReplyRow = {
-  id: string;
-  target: string;
-  targetPost: string;
-  reply: string;
-  postedDaysAgo: number;
-  metrics: { impressions: number; likes: number; replies: number; reposts: number; profileClicks: number };
-};
+type ReplyRow = ReplyActivity;
 
 const MOCK_REPLIES: ReplyRow[] = [
   {
@@ -90,12 +84,18 @@ function daysAgoLabel(n: number): string {
 
 export function RepliesPanel() {
   const { session } = useSession();
+  const seeded = session.replyActivity;
   const targets = session.strategy?.targetReplyAccounts ?? session.intake?.xHeroes ?? [];
-  const targetSet = new Set(targets.map((t) => t.toLowerCase()));
-  const rows = MOCK_REPLIES.filter(
-    (r) => targetSet.size === 0 || targetSet.has(r.target.toLowerCase())
-  );
-  const effective = rows.length > 0 ? rows : MOCK_REPLIES;
+  const source = seeded && seeded.length > 0 ? seeded : MOCK_REPLIES;
+  // If no seeded list, optionally narrow the mock set by selected targets.
+  let effective = source;
+  if (!seeded || seeded.length === 0) {
+    const targetSet = new Set(targets.map((t) => t.toLowerCase()));
+    const rows = MOCK_REPLIES.filter(
+      (r) => targetSet.size === 0 || targetSet.has(r.target.toLowerCase())
+    );
+    effective = rows.length > 0 ? rows : MOCK_REPLIES;
+  }
 
   const totals = effective.reduce(
     (a, r) => ({

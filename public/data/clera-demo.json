@@ -34,5 +34,137 @@
         "rationale": "Dev-credible, specific, never shills. His replies are where your founding-engineer candidates live."
       }
     ]
-  }
+  },
+  "performanceHistory": [
+    {
+      "id": "cl-h1",
+      "channel": "x",
+      "weekOf": "2026-03-23",
+      "body": "1,200 intros made. 8 days to first interview. 0 people ghosted. We built Clera because applying to 50 jobs and hearing back from 2 is a customer service failure, not a job search.",
+      "metrics": { "impressions": 54820, "likes": 612, "reposts": 94, "replies": 47, "bookmarks": 218 },
+      "notes": "won on the hook: three stats in the first sentence before any verb."
+    },
+    {
+      "id": "cl-h2",
+      "channel": "x",
+      "weekOf": "2026-03-23",
+      "body": "In today's competitive job market, it's more important than ever to stand out. Here's why networking matters for engineers.",
+      "metrics": { "impressions": 4120, "likes": 14, "reposts": 1, "replies": 0, "bookmarks": 2 },
+      "notes": "flopped: 'in today's competitive' opener, zero specificity."
+    },
+    {
+      "id": "cl-h3",
+      "channel": "x",
+      "weekOf": "2026-03-30",
+      "body": "A founding engineer we matched this week was ghosted by 31 startups before us. First Slack intro on Clera — offer in 6 days. Ghosting is a pipeline problem, not a candidate problem.",
+      "metrics": { "impressions": 68240, "likes": 741, "reposts": 128, "replies": 62, "bookmarks": 284 },
+      "notes": "won on the hook: '31 startups' hard number before the frame."
+    },
+    {
+      "id": "cl-h4",
+      "channel": "x",
+      "weekOf": "2026-03-30",
+      "body": "What do you think makes a great engineering team? Would love to hear your thoughts below 👇",
+      "metrics": { "impressions": 3210, "likes": 8, "reposts": 0, "replies": 3, "bookmarks": 1 },
+      "notes": "flopped: open-ended question with no stake, no stat, nothing to screenshot."
+    },
+    {
+      "id": "cl-h5",
+      "channel": "x",
+      "weekOf": "2026-04-06",
+      "body": "47 job applications. 2 minutes on Clera. Same engineer, same resume — the second one closed in 9 days. The bottleneck was never the candidate.",
+      "metrics": { "impressions": 72140, "likes": 812, "reposts": 146, "replies": 71, "bookmarks": 312 },
+      "notes": "won on the hook: '47 / 2' contrast before any verb, story-shaped."
+    },
+    {
+      "id": "cl-h6",
+      "channel": "x",
+      "weekOf": "2026-04-06",
+      "body": "Hiring is a journey, not a destination. Every role teaches us something new about what candidates really want.",
+      "metrics": { "impressions": 5840, "likes": 16, "reposts": 2, "replies": 1, "bookmarks": 3 },
+      "notes": "flopped: journey/destination platitude with no artifact, no edge."
+    },
+    {
+      "id": "cl-h7",
+      "channel": "x",
+      "weekOf": "2026-04-13",
+      "body": "2 minutes. That's the median time our candidates spend on intake before getting matched to 3 real roles. Last year that same process took 47 cold applications. Interfaces compound.",
+      "metrics": { "impressions": 81620, "likes": 904, "reposts": 178, "replies": 84, "bookmarks": 358 },
+      "notes": "won on the hook: naked '2 minutes.' fragment before any context."
+    },
+    {
+      "id": "cl-h8",
+      "channel": "linkedin",
+      "weekOf": "2026-03-30",
+      "body": "A founder DM'd me last week: 'I posted the role Monday. It's Friday. I have 340 resumes and zero signal.' The job post is a landing page with a 0.3% conversion rate. We'd never accept that anywhere else in the business. Why is hiring the exception?",
+      "metrics": { "impressions": 38420, "likes": 512, "reposts": 68, "replies": 41, "bookmarks": 196 },
+      "notes": "won on the hook: specific founder anecdote + '0.3% conversion' reframe."
+    },
+    {
+      "id": "cl-h9",
+      "channel": "linkedin",
+      "weekOf": "2026-04-06",
+      "body": "We track one number above all others: days from signup to first Slack intro with a hiring manager. It's 8. Before Clera, the same graph for our candidates was 22 weeks. The difference isn't the people — it's the channel.",
+      "metrics": { "impressions": 41260, "likes": 584, "reposts": 79, "replies": 48, "bookmarks": 224 },
+      "notes": "won on the hook: single-metric focus, 8 vs 22 contrast."
+    },
+    {
+      "id": "cl-h10",
+      "channel": "linkedin",
+      "weekOf": "2026-04-13",
+      "body": "We're excited to announce some exciting updates to our platform! Stay tuned for more info.",
+      "metrics": { "impressions": 2140, "likes": 6, "reposts": 0, "replies": 0, "bookmarks": 1 },
+      "notes": "flopped: teaser with no content, no specificity, no reason to care."
+    }
+  ],
+  "replies": [
+    {
+      "id": "cl-r1",
+      "target": "@levie",
+      "targetPost": "Applied to 47 jobs on LinkedIn in 2008 as an intern. Heard back from 0. Somehow we are doing the exact same thing 17 years later and calling it innovation.",
+      "reply": "The median candidate on Clera gets a real Slack intro in 8 days after a 2-minute intake. The JD→ATS→black-hole loop is a 2008 artifact we just forgot to delete.",
+      "postedDaysAgo": 2,
+      "metrics": { "impressions": 24180, "likes": 318, "replies": 18, "reposts": 12, "profileClicks": 214 }
+    },
+    {
+      "id": "cl-r2",
+      "target": "@paulg",
+      "targetPost": "The best hires don't apply. They are introduced. Every YC batch confirms this.",
+      "reply": "Last quarter, 83% of our placed engineers said they would not have applied to the role cold. The intro is the product.",
+      "postedDaysAgo": 3,
+      "metrics": { "impressions": 41320, "likes": 562, "replies": 34, "reposts": 28, "profileClicks": 384 }
+    },
+    {
+      "id": "cl-r3",
+      "target": "@rauchg",
+      "targetPost": "Shipped Vercel's last 3 founding engineering hires via a single Slack DM each. Zero job posts. Zero recruiters. The talent market is a network graph; treat it like one.",
+      "reply": "We built Clera on this exact thesis — one Slack channel, one intro, no resume dumps. Founders tell us it feels like cheating, which is usually the sign the old workflow was broken.",
+      "postedDaysAgo": 5,
+      "metrics": { "impressions": 18740, "likes": 241, "replies": 11, "reposts": 14, "profileClicks": 172 }
+    },
+    {
+      "id": "cl-r4",
+      "target": "Jason Lemkin",
+      "targetPost": "The #1 reason great engineers ghost your job post: your JD reads like it was written by a committee. 12 bullets. 4 paragraphs of 'mission.' No salary. You're not hiring. You're posturing.",
+      "reply": "We A/B tested this with 40 startups on Clera. JDs under 120 words with a salary range closed 2.4x faster than the committee version. The post is the first experience of the company.",
+      "postedDaysAgo": 4,
+      "metrics": { "impressions": 14220, "likes": 178, "replies": 8, "reposts": 6, "profileClicks": 98 }
+    },
+    {
+      "id": "cl-r5",
+      "target": "Nikita Bier",
+      "targetPost": "Job boards are the wrong interface for talent. You don't want a list of 10,000 jobs. You want one intro to the right founder this week. That's the entire product.",
+      "reply": "This is literally our product spec. One intro, one Slack channel, one founder. We killed the 'browse jobs' tab in v2 and activation jumped 31%. The list was the bottleneck.",
+      "postedDaysAgo": 6,
+      "metrics": { "impressions": 22140, "likes": 294, "replies": 15, "reposts": 11, "profileClicks": 186 }
+    },
+    {
+      "id": "cl-r6",
+      "target": "First Round Review",
+      "targetPost": "We interviewed 40 founding engineers about why they joined their startup. The #1 answer was not equity. It was 'the founder answered my DM in 20 minutes on a Sunday.' Speed is trust.",
+      "reply": "Confirms every data point on our side: candidates whose hiring manager replies in <2h on Clera accept 3.1x more often than the >48h cohort. Speed is the offer letter.",
+      "postedDaysAgo": 8,
+      "metrics": { "impressions": 16480, "likes": 219, "replies": 9, "reposts": 8, "profileClicks": 124 }
+    }
+  ]
 }

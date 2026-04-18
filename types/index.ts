@@ -109,6 +109,21 @@ export type InferredIntake = {
   xHeroes: { handle: string; rationale: string }[];
 };
 
+export type ReplyActivity = {
+  id: string;
+  target: string; // @handle
+  targetPost: string;
+  reply: string;
+  postedDaysAgo: number;
+  metrics: {
+    impressions: number;
+    likes: number;
+    replies: number;
+    reposts: number;
+    profileClicks: number;
+  };
+};
+
 export type Session = {
   id: string;
   phase: Phase;
@@ -124,4 +139,5 @@ export type Session = {
   inferredIntake?: InferredIntake;
   inferredApproved?: boolean;
   hiringFeedback?: Record<string, string[]>;
+  replyActivity?: ReplyActivity[];
 };

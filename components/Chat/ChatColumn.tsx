@@ -123,6 +123,8 @@ export function ChatColumn() {
           linkedinHeroes: { handle: string; rationale: string }[];
           xHeroes: { handle: string; rationale: string }[];
         };
+        performanceHistory?: import('@/types').PerformanceRecord[];
+        replies?: import('@/types').ReplyActivity[];
       };
       setDemoMode(true);
       setSession((prev) => ({
@@ -130,6 +132,8 @@ export function ChatColumn() {
         intake: { ...prev.intake, ...bundle.seedIntake },
         inferredIntake: bundle.inferred,
         inferredApproved: false,
+        performanceHistory: bundle.performanceHistory ?? prev.performanceHistory,
+        replyActivity: bundle.replies ?? prev.replyActivity,
         phase: 'research',
         chatMessages: [
           ...prev.chatMessages,

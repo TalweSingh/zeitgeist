@@ -51,6 +51,7 @@ export function useAgentTurn(): UseAgentTurn {
       setSending(true);
       setError(null);
 
+      const silent = !!opts?.silent;
       const userMsg: ChatMessage = { role: 'user', content: userMessage };
       const assistantMsg: ChatMessage = {
         role: 'assistant',
@@ -60,14 +61,14 @@ export function useAgentTurn(): UseAgentTurn {
       const assistantIdxRef: { current: number } = { current: -1 };
 
       // Append user message + empty assistant placeholder up front.
+      // On silent turns, skip BOTH — progress is shown via the activity log
+      // in the artifact panel; we don't want raw JSON/preambles in the chat.
       setSession((prev) => {
-        const nextMessages = [
-          ...prev.chatMessages,
-          ...(opts?.silent ? [] : [userMsg]),
-          assistantMsg
-        ];
-        assistantIdxRef.current = nextMessages.length - 1;
-        const kickoff = opts?.silent ? describePhaseKickoff(prev.phase) : null;
+        const nextMessages = silent
+          ? prev.chatMessages
+          : [...prev.chatMessages, userMsg, assistantMsg];
+        assistantIdxRef.current = silent ? -1 : nextMessages.length - 1;
+        const kickoff = silent ? describePhaseKickoff(prev.phase) : null;
         const nextLogs = kickoff
           ? [
               ...(prev.logEvents ?? []),
@@ -105,6 +106,7 @@ export function useAgentTurn(): UseAgentTurn {
         }
 
         const appendDelta = (delta: string) => {
+          if (silent) return; // no visible message for silent turns
           setSession((prev) => {
             const next = prev.chatMessages.slice();
             const i = assistantIdxRef.current;
