@@ -2,14 +2,18 @@
 
 import * as React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSession } from '@/lib/store/session';
-import { useLearnings } from './_hooks/useLearnings';
 import { Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useContentBoard } from './ContentBoardContext';
 
 export function LearningsSidebar() {
-  const { session } = useSession();
-  const history = session.performanceHistory ?? [];
-  const { learnings, loading } = useLearnings(history);
+  const {
+    learnings,
+    learningsLoading,
+    selectedLearningIdx,
+    setSelectedLearningIdx,
+    getEvidenceRecords
+  } = useContentBoard();
 
   return (
     <div className="flex flex-col gap-3">
@@ -20,7 +24,7 @@ export function LearningsSidebar() {
         </h3>
       </div>
 
-      {loading ? (
+      {learningsLoading ? (
         <div className="flex flex-col gap-2">
           <Skeleton className="h-16 w-full" />
           <Skeleton className="h-16 w-full" />
@@ -32,17 +36,50 @@ export function LearningsSidebar() {
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          {learnings.map((l, i) => (
-            <div
-              key={`l-${i}`}
-              className="flex flex-col gap-1 rounded-md border border-border bg-card p-3 transition-all duration-200"
-            >
-              <p className="text-sm text-foreground">{l.insight}</p>
-              <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                Based on {l.evidence.length} post{l.evidence.length === 1 ? '' : 's'}
-              </span>
-            </div>
-          ))}
+          {learnings.map((l, i) => {
+            const selected = selectedLearningIdx === i;
+            const evidence = getEvidenceRecords(i);
+            return (
+              <button
+                key={`l-${i}`}
+                type="button"
+                onClick={() => setSelectedLearningIdx(selected ? null : i)}
+                className={cn(
+                  'flex flex-col gap-1 rounded-md border p-3 text-left transition-all duration-200',
+                  selected
+                    ? 'border-accent bg-accent/10 ring-1 ring-accent'
+                    : 'border-border bg-card hover:border-accent/60 hover:bg-accent/5'
+                )}
+              >
+                <p className="text-sm text-foreground">{l.insight}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    Based on {l.evidence.length} post{l.evidence.length === 1 ? '' : 's'}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wide text-accent-foreground">
+                    {selected ? 'highlighting' : 'click to trace'}
+                  </span>
+                </div>
+                {selected && evidence.length > 0 ? (
+                  <div className="mt-2 flex flex-col gap-1.5 border-t border-border pt-2">
+                    {evidence.map((r) => (
+                      <div
+                        key={r.id}
+                        className="flex flex-col gap-0.5 text-[11px] text-muted-foreground"
+                      >
+                        <div className="line-clamp-2">{r.body.split('\n')[0]}</div>
+                        <div className="flex gap-2 tabular-nums">
+                          <span>{r.metrics.impressions.toLocaleString()} imp</span>
+                          <span>· {r.metrics.likes.toLocaleString()} likes</span>
+                          <span>· {r.metrics.reposts} rp</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

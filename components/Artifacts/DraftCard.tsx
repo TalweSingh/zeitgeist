@@ -4,9 +4,21 @@ import * as React from 'react';
 import type { Draft } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Twitter, Linkedin, Copy, Send, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import {
+  Twitter,
+  Linkedin,
+  Copy,
+  Send,
+  AlertCircle,
+  RefreshCw,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  TrendingUp
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from '@/lib/store/session';
+import { useContentBoard } from './ContentBoardContext';
 
 function engagementVariant(e: Draft['predictedEngagement']) {
   if (e === 'high') return { variant: 'success' as const, label: 'High' };
@@ -28,14 +40,37 @@ function fitTextColor(score: number) {
 
 export function DraftCard({ draft }: { draft: Draft }) {
   const { setSession } = useSession();
+  const {
+    selectedLearningIdx,
+    setSelectedLearningIdx,
+    learningApplies,
+    getAppliedLearningIdx,
+    getSimulatedMetrics,
+    getEvidenceRecords,
+    learnings
+  } = useContentBoard();
   const [publishing, setPublishing] = React.useState(false);
   const [published, setPublished] = React.useState<{ url?: string } | null>(null);
   const [publishError, setPublishError] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(false);
 
   const eng = engagementVariant(draft.predictedEngagement);
   const score = Math.max(0, Math.min(1, draft.brandFitScore ?? 0));
   const rejected = !!draft.rejected;
+  const sim = getSimulatedMetrics(draft);
+
+  // Highlight / dim based on selected learning in sidebar.
+  const highlightState: 'matched' | 'dimmed' | 'none' =
+    selectedLearningIdx !== null
+      ? learningApplies(draft, selectedLearningIdx)
+        ? 'matched'
+        : 'dimmed'
+      : 'none';
+
+  const appliedIdx = getAppliedLearningIdx(draft);
+  const appliedLearning = appliedIdx !== null ? learnings[appliedIdx] : null;
+  const evidence = appliedIdx !== null ? getEvidenceRecords(appliedIdx) : [];
 
   async function publish() {
     setPublishing(true);
@@ -47,11 +82,8 @@ export function DraftCard({ draft }: { draft: Draft }) {
         body: JSON.stringify({ draft })
       });
       const json = (await res.json()) as { ok: boolean; url?: string; error?: string };
-      if (json.ok) {
-        setPublished({ url: json.url });
-      } else {
-        setPublishError(json.error ?? 'Publish failed');
-      }
+      if (json.ok) setPublished({ url: json.url });
+      else setPublishError(json.error ?? 'Publish failed');
     } catch (e) {
       setPublishError(e instanceof Error ? e.message : 'Publish failed');
     } finally {
@@ -67,7 +99,6 @@ export function DraftCard({ draft }: { draft: Draft }) {
     } catch {
       // ignore
     }
-    // fire-and-forget telemetry
     fetch('/api/channels/linkedin/copy', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -78,9 +109,7 @@ export function DraftCard({ draft }: { draft: Draft }) {
   function revise() {
     setSession((prev) => ({
       ...prev,
-      drafts: prev.drafts.map((d) =>
-        d.id === draft.id ? { ...d, rejected: undefined } : d
-      )
+      drafts: prev.drafts.map((d) => (d.id === draft.id ? { ...d, rejected: undefined } : d))
     }));
   }
 
@@ -89,8 +118,10 @@ export function DraftCard({ draft }: { draft: Draft }) {
   return (
     <div
       className={cn(
-        'relative flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm transition-all duration-200',
-        rejected ? 'border-destructive' : 'border-border'
+        'relative flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm transition-all duration-300',
+        rejected ? 'border-destructive' : 'border-border',
+        highlightState === 'matched' && 'border-accent ring-2 ring-accent/60',
+        highlightState === 'dimmed' && 'opacity-50'
       )}
     >
       <div className="flex items-start justify-between gap-2">
@@ -120,9 +151,7 @@ export function DraftCard({ draft }: { draft: Draft }) {
       </p>
 
       {draft.rationale ? (
-        <div className="text-xs italic text-muted-foreground">
-          Why: {draft.rationale}
-        </div>
+        <div className="text-xs italic text-muted-foreground">Why: {draft.rationale}</div>
       ) : null}
 
       <div className="flex items-center gap-2">
@@ -132,15 +161,86 @@ export function DraftCard({ draft }: { draft: Draft }) {
             style={{ width: `${Math.round(score * 100)}%` }}
           />
         </div>
-        <span className={cn('text-xs tabular-nums', fitTextColor(score))}>
-          {score.toFixed(2)}
-        </span>
+        <span className={cn('text-xs tabular-nums', fitTextColor(score))}>{score.toFixed(2)}</span>
       </div>
+
+      {sim && !rejected ? (
+        <div className="flex items-center justify-between rounded-md border border-accent/40 bg-accent/5 px-2 py-1.5 text-[11px]">
+          <div className="flex items-center gap-1.5 text-accent-foreground">
+            <TrendingUp className="h-3.5 w-3.5" />
+            <span className="font-medium">Next week forecast</span>
+          </div>
+          <div className="flex gap-2 tabular-nums text-muted-foreground">
+            <span>{sim.impressions.toLocaleString()} imp</span>
+            <span>{sim.likes.toLocaleString()} likes</span>
+            <span>{sim.reposts} rp</span>
+            <span className={cn(sim.delta >= 1 ? 'text-success' : 'text-warning')}>
+              {sim.delta >= 1 ? '+' : ''}
+              {sim.delta.toFixed(2)}×
+            </span>
+          </div>
+        </div>
+      ) : null}
 
       {rejected && draft.rejected ? (
         <div className="flex items-start gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-xs text-destructive">
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>Blocked: {draft.rejected.reason}</span>
+        </div>
+      ) : null}
+
+      {appliedLearning ? (
+        <div className="flex flex-col gap-1.5">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className={cn(
+              'flex items-center justify-between rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-all duration-200 hover:border-accent/60 hover:text-accent-foreground',
+              expanded && 'border-accent/60 bg-accent/5 text-accent-foreground'
+            )}
+          >
+            <span>Why this draft?</span>
+            {expanded ? (
+              <ChevronUp className="h-3 w-3" />
+            ) : (
+              <ChevronDown className="h-3 w-3" />
+            )}
+          </button>
+          {expanded ? (
+            <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/30 p-2">
+              <div className="flex items-start gap-1.5 text-[11px] text-foreground">
+                <span className="text-accent-foreground">Learning</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLearningIdx(appliedIdx)}
+                  className="text-left underline decoration-dotted underline-offset-2 hover:text-accent-foreground"
+                >
+                  {appliedLearning.insight}
+                </button>
+              </div>
+              {evidence.length > 0 ? (
+                <div className="flex flex-col gap-1 border-t border-border pt-1.5">
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    Evidence
+                  </div>
+                  {evidence.map((r) => (
+                    <div
+                      key={r.id}
+                      className="flex flex-col gap-0.5 text-[11px] text-muted-foreground"
+                    >
+                      <div className="line-clamp-2 text-foreground/80">
+                        {r.body.split('\n')[0]}
+                      </div>
+                      <div className="flex gap-2 tabular-nums">
+                        <span>{r.metrics.impressions.toLocaleString()} imp</span>
+                        <span>· {r.metrics.likes.toLocaleString()} likes</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       ) : null}
 

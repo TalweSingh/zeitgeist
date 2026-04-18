@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSession } from '@/lib/store/session';
 import { DraftCard } from './DraftCard';
 import { LearningsSidebar } from './LearningsSidebar';
+import { ContentBoardProvider } from './ContentBoardContext';
+import { LoopHeader } from './LoopHeader';
 import type { Draft } from '@/types';
 
 function groupBy<T, K extends string>(arr: T[], key: (x: T) => K): Record<K, T[]> {
@@ -38,8 +40,10 @@ export function ContentBoard() {
   };
 
   return (
+    <ContentBoardProvider>
     <div className="h-full overflow-auto p-6">
-      <div className="grid h-full grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr_20rem]">
+      <LoopHeader />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr_20rem]">
         {/* General drafts */}
         <section className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
@@ -112,6 +116,7 @@ export function ContentBoard() {
         </aside>
       </div>
     </div>
+    </ContentBoardProvider>
   );
 }
 
