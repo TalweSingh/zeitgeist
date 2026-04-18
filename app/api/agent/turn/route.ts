@@ -155,14 +155,23 @@ function extractTrailingJson(text: string): unknown {
     return undefined;
   };
 
-  let lastParsed: unknown = null;
+  // Among all positions that balanced-parse, pick the LONGEST one.
+  // The outer brief/array is always a superset of any nested object/array,
+  // so the longest successful parse is the top-level value.
+  let bestParsed: unknown = null;
+  let bestLength = 0;
   for (let i = 0; i < trimmed.length; i++) {
     const c = trimmed[i];
     if (c !== '{' && c !== '[') continue;
     const parsed = tryParseBalanced(trimmed, i);
-    if (parsed !== undefined) lastParsed = parsed;
+    if (parsed === undefined) continue;
+    const len = JSON.stringify(parsed).length;
+    if (len > bestLength) {
+      bestParsed = parsed;
+      bestLength = len;
+    }
   }
-  return lastParsed;
+  return bestParsed;
 }
 
 function computePatch(
