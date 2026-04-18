@@ -261,6 +261,7 @@ export function ChatColumn() {
         <StrategyFormComposer
           demoMode={demoMode}
           disabled={sending}
+          suggestedAccounts={session.intake?.xHeroes ?? []}
           onSubmit={handleStrategySubmit}
         />
       );
