@@ -43,8 +43,14 @@ export function ChatColumn() {
   // When research finishes, auto-kick a silent turn so the agent can advance
   // phases with a summary.
   const research = useResearchStream({
-    onDone: () => {
-      agentTurn.send('Research complete. Summarize findings and advance.', { silent: true });
+    onDone: (result) => {
+      agentTurn.send('Research complete. Summarize findings and advance.', {
+        silent: true,
+        sessionOverride: {
+          scrapedData: result.scrapedData ?? undefined,
+          jobs: result.jobs
+        }
+      });
     }
   });
 

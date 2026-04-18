@@ -78,12 +78,12 @@ export default function HomePage() {
           </button>
         </div>
       </header>
-      <main className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-[420px_1fr]">
-        <aside className="flex h-full flex-col border-r border-border bg-background">
+      <main className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden md:grid-cols-[420px_1fr]">
+        <aside className="flex h-full min-h-0 flex-col overflow-hidden border-r border-border bg-background">
           <ChatColumn />
         </aside>
-        <section className="flex h-full flex-col overflow-hidden bg-muted/30">
-          <div className="flex-1 overflow-auto p-6">
+        <section className="flex h-full min-h-0 flex-col overflow-hidden bg-muted/30">
+          <div className="min-h-0 flex-1 overflow-auto p-6">
             <ArtifactPanel />
           </div>
         </section>

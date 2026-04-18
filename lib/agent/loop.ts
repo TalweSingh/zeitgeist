@@ -3,9 +3,11 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { Message, MessageParam, Tool, ToolUseBlock } from '@anthropic-ai/sdk/resources/messages';
 
-const MODEL = process.env.ZEITGEIST_MODEL ?? 'claude-sonnet-4-6';
+const MODEL = process.env.ZEITGEIST_MODEL ?? 'claude-opus-4-7';
 const MAX_ITERATIONS = 8;
-const MAX_TOKENS = 4096;
+// Brand-brief and content-generation turns emit long structured JSON; 4096
+// was truncating mid-object, which broke downstream JSON parsing.
+const MAX_TOKENS = 8192;
 
 export type ToolUseEvent = {
   name: string;

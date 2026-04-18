@@ -26,11 +26,11 @@ export function MessageList({
   }, [signal]);
 
   if (messages.length === 0 && emptyState) {
-    return <div className="flex-1 overflow-auto p-4">{emptyState}</div>;
+    return <div className="min-h-0 flex-1 overflow-auto p-4">{emptyState}</div>;
   }
 
   return (
-    <div ref={scrollRef} className="flex-1 overflow-y-auto">
+    <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
       <div className="flex flex-col gap-2 p-4">
         {messages.map((m, i) => (
           <MessageBubble key={i} message={m} />

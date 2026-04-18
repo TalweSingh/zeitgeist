@@ -1,9 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import type { ChatMessage, LogEvent } from '@/types';
+import type { ChatMessage, Job, LogEvent, ScrapedData } from '@/types';
 import { useSession } from '@/lib/store/session';
 import { parseSse } from '@/lib/sse';
+
+export type ResearchResult = {
+  scrapedData: ScrapedData | null;
+  jobs: Job[];
+};
 
 export type UseResearchStream = {
   running: boolean;
@@ -18,7 +23,7 @@ export type UseResearchStream = {
  * events into session.logEvents AND as role: 'log' chat messages, and on
  * the terminal `data` event patches scrapedData + jobs. On `done`, resolves.
  */
-export function useResearchStream(opts?: { onDone?: () => void }): UseResearchStream {
+export function useResearchStream(opts?: { onDone?: (result: ResearchResult) => void }): UseResearchStream {
   const { session, setSession } = useSession();
   const sessionRef = React.useRef(session);
   React.useEffect(() => {
@@ -45,6 +50,11 @@ export function useResearchStream(opts?: { onDone?: () => void }): UseResearchSt
 
       const controller = new AbortController();
       abortRef.current = controller;
+
+      // Capture the final data-event payload locally so onDone can forward
+      // it before React has committed the corresponding setSession update.
+      let latestScrapedData: ScrapedData | null = null;
+      let latestJobs: Job[] = [];
 
       try {
         const qs = startOpts?.demo ? '?demo=true' : '';
@@ -77,13 +87,15 @@ export function useResearchStream(opts?: { onDone?: () => void }): UseResearchSt
                 chatMessages: [...prev.chatMessages, chatMsg]
               }));
             } else if (evt.type === 'data') {
+              if (evt.scrapedData) latestScrapedData = evt.scrapedData as ScrapedData;
+              if (Array.isArray(evt.jobs)) latestJobs = evt.jobs as Job[];
               setSession((prev) => ({
                 ...prev,
                 scrapedData: evt.scrapedData ?? prev.scrapedData,
                 jobs: Array.isArray(evt.jobs) ? evt.jobs : prev.jobs
               }));
             } else if (evt.type === 'done') {
-              onDoneRef.current?.();
+              onDoneRef.current?.({ scrapedData: latestScrapedData, jobs: latestJobs });
             }
           },
           controller.signal

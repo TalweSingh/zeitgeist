@@ -48,7 +48,11 @@ export const PHASES: Record<Phase, PhaseSpec> = {
   },
   brand_identity: {
     systemPrompt: BRAND_SYNTHESIS_SYSTEM,
-    allowedTools: ['checkBrandFit'],
+    // Brand synthesis composes JSON from the CONTEXT block — no tools needed.
+    // Granting checkBrandFit here caused the model to invent drafts, score them
+    // in a multi-iteration tool loop, and hit MAX_ITERATIONS before emitting
+    // the final brief.
+    allowedTools: [],
     // Never auto-advance. The user drives transition via BrandBriefCard's Approve button.
     advanceCriterion: () => false
   },

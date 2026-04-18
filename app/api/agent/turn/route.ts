@@ -117,29 +117,52 @@ function buildMessageHistory(session: Session, userMessage: string, phase: Phase
 }
 
 /**
- * Extract any final JSON object/array from the accumulated assistant text.
- * Returns null if nothing parses.
+ * Extract a trailing JSON object or array from the assistant text.
+ *
+ * Strategy: walk the text and find every position where a top-level JSON
+ * value could start (`{` or `[`), then attempt a balanced-bracket parse from
+ * that position. Return the LAST successful parse. This handles nested
+ * structures correctly — `lastIndexOf('{')` would pick an inner `{` and fail.
  */
 function extractTrailingJson(text: string): unknown {
   const trimmed = text.trim().replace(/```json\s*/gi, '').replace(/```/g, '').trim();
-  // Prefer the LAST balanced JSON block (object or array) in the text.
-  const candidates: string[] = [];
-  const brace = trimmed.lastIndexOf('{');
-  const bracket = trimmed.lastIndexOf('[');
-  if (brace >= 0) candidates.push(trimmed.slice(brace));
-  if (bracket >= 0) candidates.push(trimmed.slice(bracket));
-  for (const c of candidates) {
-    try {
-      return JSON.parse(c);
-    } catch {
-      // keep going
+
+  const tryParseBalanced = (src: string, start: number): unknown | undefined => {
+    const open = src[start];
+    const close = open === '{' ? '}' : open === '[' ? ']' : null;
+    if (!close) return undefined;
+    let depth = 0;
+    let inString = false;
+    let escape = false;
+    for (let i = start; i < src.length; i++) {
+      const c = src[i];
+      if (escape) { escape = false; continue; }
+      if (c === '\\') { escape = true; continue; }
+      if (c === '"') { inString = !inString; continue; }
+      if (inString) continue;
+      if (c === open) depth++;
+      else if (c === close) {
+        depth--;
+        if (depth === 0) {
+          try {
+            return JSON.parse(src.slice(start, i + 1));
+          } catch {
+            return undefined;
+          }
+        }
+      }
     }
+    return undefined;
+  };
+
+  let lastParsed: unknown = null;
+  for (let i = 0; i < trimmed.length; i++) {
+    const c = trimmed[i];
+    if (c !== '{' && c !== '[') continue;
+    const parsed = tryParseBalanced(trimmed, i);
+    if (parsed !== undefined) lastParsed = parsed;
   }
-  try {
-    return JSON.parse(trimmed);
-  } catch {
-    return null;
-  }
+  return lastParsed;
 }
 
 function computePatch(

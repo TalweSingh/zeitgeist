@@ -14,7 +14,10 @@ export type AgentTurnResult = {
 export type UseAgentTurn = {
   sending: boolean;
   error: string | null;
-  send: (userMessage: string, opts?: { silent?: boolean }) => Promise<AgentTurnResult | null>;
+  send: (
+    userMessage: string,
+    opts?: { silent?: boolean; sessionOverride?: Partial<Session> }
+  ) => Promise<AgentTurnResult | null>;
   abort: () => void;
 };
 
@@ -72,11 +75,15 @@ export function useAgentTurn(): UseAgentTurn {
       let result: AgentTurnResult | null = null;
 
       try {
+        const sessionForTurn: Session = opts?.sessionOverride
+          ? ({ ...sessionRef.current, ...opts.sessionOverride } as Session)
+          : sessionRef.current;
+
         const res = await fetch('/api/agent/turn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
           signal: controller.signal,
-          body: JSON.stringify({ session: sessionRef.current, userMessage })
+          body: JSON.stringify({ session: sessionForTurn, userMessage })
         });
 
         if (!res.ok) {
