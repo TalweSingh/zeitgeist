@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 type SlotKey =
   | 'subjectType'
   | 'companyUrl'
-  | 'oneLiner'
   | 'linkedinHeroes'
   | 'xHeroes'
   | 'favoritePosts'
@@ -26,7 +25,6 @@ type Slot = {
 const SLOTS: Slot[] = [
   { key: 'subjectType', label: 'For', kind: 'text' },
   { key: 'companyUrl', label: 'Website URL', kind: 'text' },
-  { key: 'oneLiner', label: 'One-liner', kind: 'text' },
   { key: 'linkedinHeroes', label: 'LinkedIn heroes', kind: 'chips' },
   { key: 'xHeroes', label: 'X heroes', kind: 'chips' },
   { key: 'favoritePosts', label: 'Favorite posts', kind: 'posts' },

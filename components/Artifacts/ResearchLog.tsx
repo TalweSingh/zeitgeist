@@ -113,9 +113,6 @@ export function ResearchLog() {
               <CardTitle>{companyName}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              {session.intake?.oneLiner ? (
-                <p className="text-sm text-muted-foreground">{session.intake.oneLiner}</p>
-              ) : null}
               <div className="grid grid-cols-3 gap-3">
                 <SummaryStat label="Pages scraped" value={pages.length} />
                 <SummaryStat label="Inspiration profiles" value={inspiration.length} />

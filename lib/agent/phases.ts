@@ -20,7 +20,6 @@ const intakeFilled = (s: Session): boolean => {
   const i = s.intake;
   return !!(
     i.companyUrl &&
-    i.oneLiner &&
     i.linkedinHeroes?.length &&
     i.xHeroes?.length &&
     i.favoritePosts?.length &&

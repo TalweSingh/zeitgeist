@@ -9,7 +9,6 @@ export type Phase =
 export type Intake = {
   subjectType: 'brand' | 'individual';
   companyUrl: string;
-  oneLiner: string;
   linkedinHeroes: string[];
   xHeroes: string[];
   favoritePosts: string[];
