@@ -6,6 +6,36 @@ import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '@/types';
 import { cn } from '@/lib/utils';
 
+/**
+ * Agent turns in some phases end with a raw JSON block (brand brief, drafts,
+ * selection result). Strip it from the display so the user only sees the
+ * human-facing prose; the structured data is already applied to session state
+ * via the turn route's patch. Works on partial/streaming JSON too: any content
+ * that starts with `{` or `[` (after a line break) is hidden.
+ */
+function stripTrailingJsonForDisplay(text: string): string {
+  if (!text) return text;
+  const leading = text.trimStart();
+  // Pure JSON (streaming or finished) -> hide entirely.
+  if (/^[{[]/.test(leading)) return '';
+  // Find last standalone JSON block.
+  const re = /\n+\s*[{[]/g;
+  let lastIdx = -1;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) lastIdx = m.index;
+  if (lastIdx >= 0) return text.slice(0, lastIdx).trimEnd();
+  // Strip `\`\`\`json` fences that some models add even when told not to.
+  const fence = text.lastIndexOf('```');
+  if (fence > 0) {
+    const head = text.slice(0, fence);
+    if (/```json\s*$/i.test(head)) {
+      const prev = head.lastIndexOf('```json');
+      return prev > 0 ? text.slice(0, prev).trimEnd() : '';
+    }
+  }
+  return text;
+}
+
 function formatTime(t?: number) {
   if (!t) return '';
   const d = new Date(t);
@@ -49,6 +79,7 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
   }
 
   // assistant
+  const display = stripTrailingJsonForDisplay(message.content);
   return (
     <div className="flex justify-start">
       <div
@@ -59,7 +90,7 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
       >
         <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-pre:my-1 prose-headings:my-1">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {message.content || (isStreaming ? '…' : '')}
+            {display || (isStreaming ? '…' : '')}
           </ReactMarkdown>
         </div>
         {isStreaming ? (

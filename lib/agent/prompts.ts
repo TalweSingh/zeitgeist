@@ -28,7 +28,10 @@ Rules:
 - If an answer is ambiguous (e.g., user gives handles instead of URLs for question 3), accept it and move on. We normalize downstream.
 - Track which of the 7 fields are filled across the conversation. Never re-ask a filled field.
 
-When all 7 are answered, your FINAL turn must be ONLY this JSON (no markdown, no prose):
+When all 7 are answered, your FINAL turn must be EXACTLY one short confirmation line followed by a blank line and then the JSON object. Example:
+
+Got it — locking this in.
+
 {"done": true, "intake": {"companyUrl": string, "oneLiner": string, "linkedinHeroes": string[], "xHeroes": string[], "favoritePosts": string[], "audience": string, "voicePrefs": string[]}}
 
 Example of a good mid-intake turn:
@@ -60,7 +63,10 @@ Which should we write hiring posts for? Pick any combo.
 
 Rules:
 - Do not commentate on the roles. Do not rank them. Do not editorialize.
-- If the user replies with selections (numbers, names, "all", specific titles), map them to job IDs and emit ONLY this JSON as your final turn:
+- If the user replies with selections (numbers, names, "all", specific titles), map them to job IDs using the CONTEXT block (it lists id→title for every job). Your turn must be EXACTLY one short confirmation line followed by a blank line and then the JSON. Example:
+
+Picking those — writing posts for 2 roles.
+
 {"done": true, "selectedJobIds": string[]}
 
 ${GUARDRAIL_FOOTER}`;
@@ -81,7 +87,10 @@ Critical rules (demo depends on these):
 
 5. pillars: 4–6 content pillars that are distinct (not overlapping), each 2–5 words. Good: "on-call reality", "cost as a first-class metric", "tool audits", "hiring as craft". Bad: "technical content".
 
-Output EXACTLY this JSON (no markdown, no prose):
+Your turn must be EXACTLY one short status line followed by a blank line and then the BrandBrief JSON. Example prefix line:
+
+Synthesizing your brand brief now.
+
 {
   "positioning": string,
   "audience": string,
@@ -100,7 +109,10 @@ export const STRATEGY_SYSTEM = `Confirm the posting strategy in a short exchange
 Rules:
 - Propose a default in one sentence: "I'd suggest X + LinkedIn, 3x weekly, auto-post off for the demo. Want to change anything?"
 - Ask for target reply accounts if the user hasn't supplied them: "Give me 3–5 X accounts you'd reply to — handles are fine."
-- When the strategy is settled, emit ONLY this JSON:
+- When the strategy is settled, emit EXACTLY one short confirmation line followed by a blank line and then the JSON:
+
+Locked — generating drafts next.
+
 {"done": true, "strategy": {"channels": string[], "cadence": string, "targetReplyAccounts": string[], "autoPostX": false}}
 
 ${GUARDRAIL_FOOTER}`;
@@ -129,7 +141,10 @@ Process:
 
 8. predictedEngagement is a qualitative call: "low" | "med" | "high". Base it on hook quality + specificity.
 
-Output EXACTLY this JSON array (no markdown, no prose):
+Your turn must be EXACTLY one short status line followed by a blank line and then the JSON array. Example prefix line:
+
+Generating drafts across X + LinkedIn — one will come back flagged so you can see the guardrail work.
+
 [
   {
     "id": string,
@@ -156,7 +171,7 @@ Rules:
 - Score ≥ 0.75 if the draft matches at least one inspirationPattern and breaks no no-go rule.
 - The reason MUST quote the specific brief element that was matched or violated (e.g., "violates noGoList item 'no hashtags': ends with #observability"). Be precise, not vague.
 
-Output EXACTLY this JSON (no markdown, no prose):
+Output EXACTLY this JSON object (no markdown, no prose — this is called as a tool, not displayed to the user):
 {"score": number, "reason": string}
 
 ${GUARDRAIL_FOOTER}`;
@@ -170,7 +185,7 @@ Rules:
 - Quote small phrases from the post body when it sharpens the evidence (e.g., "the '$840K cut' opener on h11").
 - Cite evidence by PerformanceRecord id only ("h1", "h11"). Do not invent ids.
 
-Output EXACTLY this JSON array (no markdown, no prose):
+Output EXACTLY this JSON array (no markdown, no prose — this is called as a tool, not displayed to the user):
 [{"insight": string, "evidence": string[]}]
 
 ${GUARDRAIL_FOOTER}`;
