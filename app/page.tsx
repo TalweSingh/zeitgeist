@@ -60,7 +60,7 @@ export default function HomePage() {
     <div className="flex h-screen flex-col">
       <header className="flex h-14 items-center justify-between border-b border-border bg-background px-6">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-semibold tracking-tight text-foreground">Zeitgeist</span>
+          <img src="/logo.png" alt="Zeitgeist" className="h-7 w-auto" />
           <span className="text-xs text-muted-foreground">
             brand brain · chat → content
           </span>
