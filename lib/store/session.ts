@@ -13,7 +13,20 @@ function makeInitialSession(): Session {
         ? crypto.randomUUID()
         : Math.random().toString(36).slice(2),
     phase: 'intake',
-    chatMessages: [],
+    chatMessages: [
+      {
+        role: 'assistant' as const,
+        content:
+          'Zeitgeist is your autonomous growth engine for LinkedIn and X — it interviews you, builds a brand brain from your world, and generates content that ships on autopilot.',
+        meta: { preseeded: true }
+      },
+      {
+        role: 'assistant' as const,
+        content:
+          'To get started — are you building this for a brand or company, or for yourself as an individual?',
+        meta: { preseeded: true }
+      }
+    ],
     intake: {},
     jobs: [],
     drafts: [],
