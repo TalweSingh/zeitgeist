@@ -121,14 +121,23 @@ export function BrandBriefCard() {
   }
 
   function approve() {
-    setSession((prev) => ({
-      ...prev,
-      phase: 'strategy',
-      chatMessages: [
-        ...prev.chatMessages,
-        { role: 'system', content: '→ strategy starting' }
-      ]
-    }));
+    setSession((prev) => {
+      const jobCount = prev.jobs.length;
+      return {
+        ...prev,
+        phase: 'jobs_review',
+        chatMessages: [
+          ...prev.chatMessages,
+          {
+            role: 'assistant',
+            content:
+              jobCount > 0
+                ? `Brief approved. One more thing — while I was on your site I noticed ${jobCount} open roles. Want me to write hiring posts for those too?`
+                : 'Brief approved. Moving to posting strategy.'
+          }
+        ]
+      };
+    });
   }
 
   return (

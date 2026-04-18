@@ -37,10 +37,48 @@ async function writeLog(
   controller.enqueue(enc.encode(sseEvent({ type: 'log', event: makeLog(level, message) })));
 }
 
+type DemoTarget = 'lumen' | 'clera';
+
 async function runDemoStream(
   controller: ReadableStreamDefaultController<Uint8Array>,
-  enc: TextEncoder
+  enc: TextEncoder,
+  target: DemoTarget
 ) {
+  if (target === 'clera') {
+    const bundle = (await import('@/data/clera-demo.json')) as unknown as {
+      scrape: ScrapedData & { jobs: Job[] };
+    };
+    const events: Array<[LogEvent['level'], string]> = [
+      ['info', 'reading getclera.com\u2026'],
+      ['ok', 'scraped 4 pages from getclera.com'],
+      ['info', 'inferring your positioning and voice from the scrape'],
+      ['info', 'looking up inspiration profiles that match your tone'],
+      ['ok', 'picked 3 LinkedIn and 3 X heroes'],
+      ['info', 'checking careers page for open roles'],
+      ['ok', 'found 4 open roles'],
+      ['info', 'searching web: competitors, traction']
+    ];
+    for (const [level, message] of events) {
+      await sleep(jitter(200, 400));
+      await writeLog(controller, enc, level, message);
+    }
+    controller.enqueue(
+      enc.encode(
+        sseEvent({
+          type: 'data',
+          scrapedData: {
+            companyPages: bundle.scrape.companyPages,
+            inspirationProfiles: bundle.scrape.inspirationProfiles,
+            searchResults: bundle.scrape.searchResults
+          },
+          jobs: bundle.scrape.jobs
+        })
+      )
+    );
+    controller.enqueue(enc.encode(sseEvent({ type: 'done' })));
+    return;
+  }
+
   const cached = (await import('@/data/cached-scrape-lumen.json')) as unknown as ScrapedData & {
     jobs: Job[];
   };
@@ -179,11 +217,17 @@ export async function POST(req: NextRequest) {
 async function handle(req: NextRequest, body: ResearchPayload) {
   const enc = new TextEncoder();
   const demo = req.nextUrl.searchParams.get('demo') === 'true';
+  const targetParam = req.nextUrl.searchParams.get('target');
+  const urlHint = (body.intake?.companyUrl ?? '').toLowerCase();
+  const target: DemoTarget =
+    targetParam === 'clera' || urlHint.includes('getclera')
+      ? 'clera'
+      : 'lumen';
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
         if (demo) {
-          await runDemoStream(controller, enc);
+          await runDemoStream(controller, enc, target);
         } else {
           await runLiveStream(controller, enc, body.intake ?? {});
         }

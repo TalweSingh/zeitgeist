@@ -1,0 +1,158 @@
+{
+  "seedIntake": {
+    "subjectType": "brand",
+    "companyUrl": "https://getclera.com"
+  },
+  "inferred": {
+    "audience": "Engineers and operators targeting VC-backed startups who are tired of sending 50 applications into the void. Technical, specific, ghosted out.",
+    "voicePrefs": ["punchy", "contrarian", "founder-voice"],
+    "linkedinHeroes": [
+      {
+        "handle": "Jason Lemkin",
+        "rationale": "Contrarian takes on startup hiring. One-sentence paragraphs, leads with numbers. Your audience forwards these DMs on Monday mornings."
+      },
+      {
+        "handle": "Nikita Bier",
+        "rationale": "Growth-hacker voice, punchy, anti-establishment. Matches your 'stop applying, start getting introduced' framing almost exactly."
+      },
+      {
+        "handle": "First Round Review",
+        "rationale": "Editorial depth on early-stage operator problems. The engineers you're targeting quote these essays in Slack."
+      }
+    ],
+    "xHeroes": [
+      {
+        "handle": "@levie",
+        "rationale": "Opens with a concrete stat or a joke, never a preamble. Aaron Levie's shape maps cleanly onto your '2 minutes, not 2 hours' thesis."
+      },
+      {
+        "handle": "@paulg",
+        "rationale": "Terse, contrarian, zero corporate. Gets quoted by the exact engineers your intros flow to."
+      },
+      {
+        "handle": "@rauchg",
+        "rationale": "Dev-credible, specific, never shills. His replies are where your founding-engineer candidates live."
+      }
+    ]
+  },
+  "scrape": {
+    "companyPages": [
+      {
+        "url": "https://getclera.com",
+        "text": "Stop applying to startups. Start getting introduced. Clera is your AI talent agent. Tell us your experience, your preferences, your dealbreakers. Two minutes, not two hours. We match you to VC-backed startups and put you in a Slack room with the hiring manager. 8 days average to first interview. 0 people ghosted. 1,200+ introductions made."
+      },
+      {
+        "url": "https://getclera.com/how-it-works",
+        "text": "1. Chat with Clera for 2 minutes. Answer what you've built, what you want, what you won't accept. 2. We match you to 3-5 roles that actually fit — context-driven, not keyword-driven. 3. You get a direct line into a shared Slack channel with the founder or hiring manager. 4. Interview scheduling, offer support, salary calibration — we handle it. No generic application. No black hole."
+      },
+      {
+        "url": "https://getclera.com/for-companies",
+        "text": "For startups hiring: we send you a shortlist of 3 candidates who have already opted into your role. Context-rich briefs, no resume dumps. Portfolio includes Unnbound, Blok, BlueAlpha, Minoa, Mochi, Pally. Founding Engineer to Head of Sales, Seed to Series B."
+      },
+      {
+        "url": "https://getclera.com/careers",
+        "text": "We're building the talent agent we wish existed when we were job-hunting. Small team, high ownership, remote-first. Open roles: Founding Backend Engineer, AI Product Engineer, Founding Growth, Community Lead. If you've ever applied to 50 jobs and heard back from 2, you know why we're building this."
+      }
+    ],
+    "inspirationProfiles": [
+      {
+        "handle": "Jason Lemkin",
+        "channel": "linkedin",
+        "posts": [
+          "The #1 reason great engineers ghost your job post: your JD reads like it was written by a committee. 12 bullets. 4 paragraphs of 'mission.' No salary. You're not hiring. You're posturing.",
+          "Startup hiring data nobody wants to admit: the candidate who takes 48 hours to respond to your intro email has a 70% lower close rate than the one who replies in 2. Speed is a signal.",
+          "If you're a seed-stage founder and your first engineering hire came from LinkedIn InMail, I have bad news. Your next 3 should come from someone's direct introduction. Cold outreach at seed stage is an anti-pattern."
+        ]
+      },
+      {
+        "handle": "Nikita Bier",
+        "channel": "linkedin",
+        "posts": [
+          "Job boards are the wrong interface for talent. You don't want a list of 10,000 jobs. You want one intro to the right founder this week. That's the entire product.",
+          "The best engineers I know got their last three jobs via DM, Slack, and a single warm intro. Zero applications. If your hiring pipeline requires cold resumes, you already lost.",
+          "Recruiters who forward 47 resumes with no commentary are getting replaced by a function call. The job is synthesis, not forwarding."
+        ]
+      },
+      {
+        "handle": "First Round Review",
+        "channel": "linkedin",
+        "posts": [
+          "We interviewed 40 founding engineers about why they joined their startup. The #1 answer was not equity. It was 'the founder answered my DM in 20 minutes on a Sunday.' Speed is trust.",
+          "A breakdown of 12 seed-stage hiring funnels. The ones that worked shared one pattern: no ATS. A shared Slack channel with the candidate from day 1. Read that again.",
+          "Your job post is a landing page. Conversion rate matters. If your best candidate reads the first line and thinks 'corporate,' they're gone before paragraph 2."
+        ]
+      },
+      {
+        "handle": "@levie",
+        "channel": "x",
+        "posts": [
+          "Applied to 47 jobs on LinkedIn in 2008 as an intern. Heard back from 0. Somehow we are doing the exact same thing 17 years later and calling it innovation.",
+          "The average tech resume gets 7 seconds of recruiter attention. Somehow we built an entire industry around optimizing for 7 seconds. Wild.",
+          "If your recruiting funnel is 'post JD, wait, filter 400 resumes, ghost 397,' you don't have a recruiting funnel. You have a customer service failure."
+        ]
+      },
+      {
+        "handle": "@paulg",
+        "channel": "x",
+        "posts": [
+          "The best hires don't apply. They are introduced. Every YC batch confirms this.",
+          "A job application is a low-bandwidth channel trying to carry a high-bandwidth signal. Of course it fails.",
+          "If a founder tells me they found their CTO on LinkedIn, I assume they will find their Series A lead on LinkedIn. They will not."
+        ]
+      },
+      {
+        "handle": "@rauchg",
+        "channel": "x",
+        "posts": [
+          "Shipped Vercel's last 3 founding engineering hires via a single Slack DM each. Zero job posts. Zero recruiters. The talent market is a network graph; treat it like one.",
+          "Engineers who ship within 48 hours of joining are 3x more likely to still be at the company 2 years later. Hire for commit cadence, not credentials.",
+          "The interview loop is a lossy compression of who someone actually is. Work trials are lossless. Trade 4 hours of interviews for 4 hours of real work every time."
+        ]
+      }
+    ],
+    "searchResults": [
+      {
+        "query": "getclera.com competitors AI talent agent",
+        "summary": "Direct competitors: Pallet (curated talent collectives), Moonlight (freelance engineering network), Otta (job board with better UX). Indirect: traditional recruiters like Triplebyte and Karat. Clera's wedge is AI intake + Slack intro vs. resume-driven workflows."
+      },
+      {
+        "query": "getclera.com funding traction",
+        "summary": "Clera (founder Seb Scott) is pre-Series A per public signals. Traction: 1,200+ introductions, 8-day avg time-to-first-interview, portfolio includes Unnbound, Blok, BlueAlpha, Minoa, Mochi, Pally. Positioning emphasizes zero-ghosting."
+      }
+    ],
+    "jobs": [
+      {
+        "id": "job-clera-1",
+        "title": "Founding Backend Engineer",
+        "location": "Remote (US/EU)",
+        "team": "Engineering",
+        "applyUrl": "https://getclera.com/careers/founding-backend",
+        "selected": false
+      },
+      {
+        "id": "job-clera-2",
+        "title": "AI Product Engineer",
+        "location": "Remote (US/EU)",
+        "team": "Engineering",
+        "applyUrl": "https://getclera.com/careers/ai-product",
+        "selected": false
+      },
+      {
+        "id": "job-clera-3",
+        "title": "Founding Growth",
+        "location": "Remote (US/EU)",
+        "team": "Growth",
+        "applyUrl": "https://getclera.com/careers/founding-growth",
+        "selected": false
+      },
+      {
+        "id": "job-clera-4",
+        "title": "Community Lead",
+        "location": "Remote (US/EU)",
+        "team": "Community",
+        "applyUrl": "https://getclera.com/careers/community-lead",
+        "selected": false
+      }
+    ]
+  }
+}

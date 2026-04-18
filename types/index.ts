@@ -101,6 +101,13 @@ export type ChatMessage = {
   meta?: any;
 };
 
+export type InferredIntake = {
+  audience: string;
+  voicePrefs: string[];
+  linkedinHeroes: { handle: string; rationale: string }[];
+  xHeroes: { handle: string; rationale: string }[];
+};
+
 export type Session = {
   id: string;
   phase: Phase;
@@ -113,4 +120,6 @@ export type Session = {
   drafts: Draft[];
   performanceHistory: PerformanceRecord[];
   logEvents: LogEvent[];
+  inferredIntake?: InferredIntake;
+  inferredApproved?: boolean;
 };

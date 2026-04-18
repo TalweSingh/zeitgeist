@@ -21,8 +21,16 @@ export function ChatColumn() {
   const agentTurn = useAgentTurn();
   // When research finishes, auto-kick a silent turn so the agent can advance
   // phases with a summary.
+  const demoModeRef = React.useRef(demoMode);
+  React.useEffect(() => {
+    demoModeRef.current = demoMode;
+  }, [demoMode]);
   const research = useResearchStream({
     onDone: (result) => {
+      // In demo mode the InferredIntakeCard approval drives the advance; no
+      // LLM summary is needed. In live mode we kick the research-phase agent
+      // to write a short summary and emit { done: true }.
+      if (demoModeRef.current) return;
       agentTurn.send('Research complete. Summarize findings and advance.', {
         silent: true,
         sessionOverride: {
@@ -102,7 +110,7 @@ export function ChatColumn() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.phase, session.drafts]);
 
-  const handleUseDemo = React.useCallback(async () => {
+  const handleUseLumen = React.useCallback(async () => {
     if (demoLoading) return;
     setDemoLoading(true);
     try {
@@ -119,14 +127,57 @@ export function ChatColumn() {
         phase: 'research',
         chatMessages: [...prev.chatMessages, sysMsg]
       }));
-      // Kick research
-      await research.start({ demo: true });
+      await research.start({ demo: true, target: 'lumen' });
     } catch (e) {
       setSession((prev) => ({
         ...prev,
         chatMessages: [
           ...prev.chatMessages,
           { role: 'system', content: 'Failed to load demo intake.' }
+        ]
+      }));
+    } finally {
+      setDemoLoading(false);
+    }
+  }, [demoLoading, research, setDemoMode, setSession]);
+
+  const handleUseClera = React.useCallback(async () => {
+    if (demoLoading) return;
+    setDemoLoading(true);
+    try {
+      const res = await fetch('/data/clera-demo.json');
+      const bundle = (await res.json()) as {
+        seedIntake: { subjectType: 'brand' | 'individual'; companyUrl: string };
+        inferred: {
+          audience: string;
+          voicePrefs: string[];
+          linkedinHeroes: { handle: string; rationale: string }[];
+          xHeroes: { handle: string; rationale: string }[];
+        };
+      };
+      setDemoMode(true);
+      setSession((prev) => ({
+        ...prev,
+        intake: { ...prev.intake, ...bundle.seedIntake },
+        inferredIntake: bundle.inferred,
+        inferredApproved: false,
+        phase: 'research',
+        chatMessages: [
+          ...prev.chatMessages,
+          {
+            role: 'assistant',
+            content:
+              "Got it — building for Clera. Reading getclera.com now, I'll show you what I found in a second."
+          }
+        ]
+      }));
+      await research.start({ demo: true, target: 'clera' });
+    } catch (e) {
+      setSession((prev) => ({
+        ...prev,
+        chatMessages: [
+          ...prev.chatMessages,
+          { role: 'system', content: 'Failed to load Clera demo.' }
         ]
       }));
     } finally {
@@ -176,81 +227,19 @@ export function ChatColumn() {
   // dashboard fast. Each step drops a system message so the auto-action is
   // visible rather than invisible magic.
 
-  // jobs_review: auto-select every open role so the hiring section on the
-  // dashboard appears as a "bonus the agent found on its own".
-  React.useEffect(() => {
-    if (!demoMode) return;
-    if (autoJobsPickRef.current) return;
-    if (session.phase !== 'jobs_review') return;
-    if (session.jobs.length === 0) return;
-    if (agentTurn.sending) return;
-    autoJobsPickRef.current = true;
-    const ids = session.jobs.map((j) => j.id);
-    const t = setTimeout(() => {
-      setSession((prev) => ({
-        ...prev,
-        chatMessages: [
-          ...prev.chatMessages,
-          { role: 'system', content: `→ demo: agent picked up ${ids.length} open roles as bonus hiring posts` }
-        ]
-      }));
-      handleJobsSubmit(ids);
-    }, 800);
-    return () => clearTimeout(t);
-  }, [demoMode, session.phase, session.jobs, agentTurn.sending, handleJobsSubmit, setSession]);
+  // Click-driven demo: user picks jobs via JobsPickerComposer.
+  void autoJobsPickRef;
 
-  // brand_identity: once the brief has streamed in, auto-approve and advance.
-  React.useEffect(() => {
-    if (!demoMode) return;
-    if (autoApproveBriefRef.current) return;
-    if (session.phase !== 'brand_identity') return;
-    if (!session.brandBrief) return;
-    if (agentTurn.sending) return;
-    autoApproveBriefRef.current = true;
-    const t = setTimeout(() => {
-      setSession((prev) => ({
-        ...prev,
-        phase: 'strategy',
-        chatMessages: [
-          ...prev.chatMessages,
-          { role: 'system', content: '→ demo: brief auto-approved. strategy starting' }
-        ]
-      }));
-    }, 1500);
-    return () => clearTimeout(t);
-  }, [demoMode, session.phase, session.brandBrief, agentTurn.sending, setSession]);
+  // Click-driven demo: brand brief is approved via BrandBriefCard's Approve
+  // button (not an auto-timer). Keeping this block as a no-op for reference.
+  void autoApproveBriefRef;
 
-  // strategy: auto-submit demo defaults so content generation kicks off.
-  React.useEffect(() => {
-    if (!demoMode) return;
-    if (autoStrategyRef.current) return;
-    if (session.phase !== 'strategy') return;
-    if (session.strategy) return;
-    if (agentTurn.sending) return;
-    autoStrategyRef.current = true;
-    const t = setTimeout(() => {
-      const xHeroes = (session.intake?.xHeroes ?? []).slice(0, 3);
-      const fallback = ['@dhh', '@rauchg', '@mipsytipsy'];
-      const strategy: Strategy = {
-        channels: ['x', 'linkedin'],
-        cadence: '3x-weekly',
-        targetReplyAccounts: xHeroes.length ? xHeroes : fallback,
-        autoPostX: false
-      };
-      setSession((prev) => ({
-        ...prev,
-        chatMessages: [
-          ...prev.chatMessages,
-          { role: 'system', content: '→ demo: strategy auto-set (X + LinkedIn, 3x-weekly, auto-post off)' }
-        ]
-      }));
-      handleStrategySubmit(strategy);
-    }, 800);
-    return () => clearTimeout(t);
-  }, [demoMode, session.phase, session.strategy, session.intake, agentTurn.sending, handleStrategySubmit, setSession]);
+  // Click-driven demo: user submits strategy via StrategyFormComposer.
+  void autoStrategyRef;
 
+  const noUserMessagesYet = !session.chatMessages.some((m) => m.role === 'user');
   const showOnboarding =
-    session.phase === 'intake' && session.chatMessages.length === 0 && !agentTurn.sending;
+    session.phase === 'intake' && noUserMessagesYet && !agentTurn.sending;
   const showWarmingUp =
     session.phase === 'research' &&
     session.logEvents.length === 0 &&
@@ -301,14 +290,20 @@ export function ChatColumn() {
         ) : null}
       </div>
 
+      {showOnboarding ? (
+        <div className="border-b border-border p-4">
+          <OnboardingCard
+            onUseClera={handleUseClera}
+            onUseLumen={handleUseLumen}
+            demoLoading={demoLoading}
+          />
+        </div>
+      ) : null}
+
       <MessageList
         messages={session.chatMessages}
         emptyState={
-          showOnboarding ? (
-            <OnboardingCard onUseDemo={handleUseDemo} demoLoading={demoLoading} />
-          ) : showWarmingUp ? (
-            <WarmingUp label="Warming up research…" />
-          ) : null
+          showWarmingUp ? <WarmingUp label="Warming up research…" /> : null
         }
       />
 
@@ -324,15 +319,23 @@ export function ChatColumn() {
       ) : null}
 
       <div className="space-y-2 border-t border-border p-3">
-        {session.phase === 'intake' && session.chatMessages.length === 0 ? (
-          <div className="flex justify-end">
+        {session.phase === 'intake' && noUserMessagesYet ? (
+          <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={handleUseDemo}
+              onClick={handleUseClera}
+              disabled={demoLoading}
+              className="rounded-md border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent-foreground hover:bg-accent/20"
+            >
+              {demoLoading ? 'Loading…' : 'Try Clera'}
+            </button>
+            <button
+              type="button"
+              onClick={handleUseLumen}
               disabled={demoLoading}
               className="rounded-md border border-border bg-background px-2.5 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             >
-              {demoLoading ? 'Loading…' : 'Use Lumen demo'}
+              {demoLoading ? 'Loading…' : 'Lumen'}
             </button>
           </div>
         ) : null}

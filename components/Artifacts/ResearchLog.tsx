@@ -8,6 +8,7 @@ import { useSession } from '@/lib/store/session';
 import { Info, CheckCircle2, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LogEvent } from '@/types';
+import { InferredIntakeCard } from './InferredIntakeCard';
 
 function LevelIcon({ level }: { level: LogEvent['level'] }) {
   if (level === 'ok') return <CheckCircle2 className="h-4 w-4 text-success" />;
@@ -60,9 +61,12 @@ export function ResearchLog() {
     }
   }, [session.intake?.companyUrl, pages]);
 
+  const showInferred = !!session.inferredIntake;
+
   return (
     <div className="h-full overflow-auto p-6">
       <div className="flex flex-col gap-4">
+        {showInferred ? <InferredIntakeCard /> : null}
         <Card>
           <CardHeader>
             <CardTitle>Research</CardTitle>

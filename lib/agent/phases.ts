@@ -37,8 +37,9 @@ export const PHASES: Record<Phase, PhaseSpec> = {
   research: {
     systemPrompt: RESEARCH_SYSTEM,
     // Research is performed by /api/research; the turn in this phase is a summary only.
+    // User approves the InferredIntakeCard (client-side) before we advance.
     allowedTools: [],
-    advanceCriterion: (s) => !!s.scrapedData && s.jobs.length > 0
+    advanceCriterion: (s) => !!s.scrapedData && s.jobs.length > 0 && !!s.inferredApproved
   },
   jobs_review: {
     systemPrompt: JOBS_REVIEW_SYSTEM,
@@ -72,9 +73,9 @@ export const phases = PHASES;
 
 export const NEXT_PHASE: Record<Phase, Phase | null> = {
   intake: 'research',
-  research: 'jobs_review',
-  jobs_review: 'brand_identity',
-  brand_identity: 'strategy',
+  research: 'brand_identity',
+  brand_identity: 'jobs_review',
+  jobs_review: 'strategy',
   strategy: 'content',
   content: null
 };

@@ -13,7 +13,7 @@ export type ResearchResult = {
 export type UseResearchStream = {
   running: boolean;
   error: string | null;
-  start: (opts?: { demo?: boolean }) => Promise<void>;
+  start: (opts?: { demo?: boolean; target?: 'lumen' | 'clera' }) => Promise<void>;
   stop: () => void;
 };
 
@@ -57,7 +57,10 @@ export function useResearchStream(opts?: { onDone?: (result: ResearchResult) => 
       let latestJobs: Job[] = [];
 
       try {
-        const qs = startOpts?.demo ? '?demo=true' : '';
+        const params = new URLSearchParams();
+        if (startOpts?.demo) params.set('demo', 'true');
+        if (startOpts?.target) params.set('target', startOpts.target);
+        const qs = params.toString() ? `?${params.toString()}` : '';
         const res = await fetch(`/api/research${qs}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },

@@ -1,0 +1,38 @@
+{
+  "seedIntake": {
+    "subjectType": "brand",
+    "companyUrl": "https://getclera.com"
+  },
+  "inferred": {
+    "audience": "Engineers and operators targeting VC-backed startups who are tired of sending 50 applications into the void. Technical, specific, ghosted out.",
+    "voicePrefs": ["punchy", "contrarian", "founder-voice"],
+    "linkedinHeroes": [
+      {
+        "handle": "Jason Lemkin",
+        "rationale": "Contrarian takes on startup hiring. One-sentence paragraphs, leads with numbers. Your audience forwards these DMs on Monday mornings."
+      },
+      {
+        "handle": "Nikita Bier",
+        "rationale": "Growth-hacker voice, punchy, anti-establishment. Matches your 'stop applying, start getting introduced' framing almost exactly."
+      },
+      {
+        "handle": "First Round Review",
+        "rationale": "Editorial depth on early-stage operator problems. The engineers you're targeting quote these essays in Slack."
+      }
+    ],
+    "xHeroes": [
+      {
+        "handle": "@levie",
+        "rationale": "Opens with a concrete stat or a joke, never a preamble. Aaron Levie's shape maps cleanly onto your '2 minutes, not 2 hours' thesis."
+      },
+      {
+        "handle": "@paulg",
+        "rationale": "Terse, contrarian, zero corporate. Gets quoted by the exact engineers your intros flow to."
+      },
+      {
+        "handle": "@rauchg",
+        "rationale": "Dev-credible, specific, never shills. His replies are where your founding-engineer candidates live."
+      }
+    ]
+  }
+}
