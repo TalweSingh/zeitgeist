@@ -1,7 +1,8 @@
 import type { ScrapedData, ToolEnvelope, ToolSchema } from './types';
 
-const SERP_URL = 'https://serpapi.com/search';
-const TIMEOUT_MS = 10_000;
+const PPLX_URL = 'https://api.perplexity.ai/chat/completions';
+const MODEL = 'sonar';
+const TIMEOUT_MS = 12_000;
 
 function deterministicMock(query: string): ScrapedData['searchResults'][number] {
   const q = query.toLowerCase();
@@ -26,27 +27,41 @@ function deterministicMock(query: string): ScrapedData['searchResults'][number] 
 export async function searchWeb(
   query: string
 ): Promise<ToolEnvelope<ScrapedData['searchResults'][number]>> {
-  const key = process.env.SERPAPI_KEY;
-  if (!key) {
-    return { ok: true, data: deterministicMock(query) };
-  }
+  const key = process.env.PERPLEXITY_API_KEY;
+  // No key -> deterministic mock (never fails).
+  if (!key) return { ok: true, data: deterministicMock(query) };
+
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const u = new URL(SERP_URL);
-    u.searchParams.set('q', query);
-    u.searchParams.set('api_key', key);
-    const res = await fetch(u.toString(), { signal: ctrl.signal });
-    if (!res.ok) {
-      return { ok: true, data: deterministicMock(query) };
-    }
+    const res = await fetch(PPLX_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You summarize web-search results in 2 sentences. Be concrete and specific. No prose preamble.'
+          },
+          {
+            role: 'user',
+            content: `Search the web for: ${query}\n\nReturn a two-sentence summary naming concrete companies, prices, metrics, or dates where relevant.`
+          }
+        ]
+      }),
+      signal: ctrl.signal
+    });
+    if (!res.ok) return { ok: true, data: deterministicMock(query) };
     const json = (await res.json()) as {
-      organic_results?: { title?: string; snippet?: string }[];
+      choices?: { message?: { content?: string } }[];
     };
-    const top = (json.organic_results ?? []).slice(0, 3);
-    const summary = top.length
-      ? top.map((r) => `${r.title ?? ''}: ${r.snippet ?? ''}`.trim()).join(' \u2014 ')
-      : deterministicMock(query).summary;
+    const summary = (json.choices?.[0]?.message?.content ?? '').trim();
+    if (!summary) return { ok: true, data: deterministicMock(query) };
     return { ok: true, data: { query, summary } };
   } catch {
     return { ok: true, data: deterministicMock(query) };
@@ -58,7 +73,7 @@ export async function searchWeb(
 export const schema: ToolSchema = {
   name: 'searchWeb',
   description:
-    'Search the web (SerpAPI; deterministic mock if key missing). Returns { query, summary } where summary is the top organic results concatenated.',
+    'Search the web via Perplexity sonar (deterministic mock if PERPLEXITY_API_KEY missing). Returns { query, summary }.',
   input_schema: {
     type: 'object',
     properties: {
@@ -67,4 +82,3 @@ export const schema: ToolSchema = {
     required: ['query']
   }
 };
-
