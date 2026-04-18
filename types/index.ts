@@ -7,6 +7,7 @@ export type Phase =
   | 'content';
 
 export type Intake = {
+  subjectType: 'brand' | 'individual';
   companyUrl: string;
   oneLiner: string;
   linkedinHeroes: string[];
