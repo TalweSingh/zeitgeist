@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { RotateCcw } from 'lucide-react';
 import { useSession } from '@/lib/store/session';
 import { IntakeBuilder } from '@/components/Artifacts/IntakeBuilder';
 import { ResearchLog } from '@/components/Artifacts/ResearchLog';
@@ -10,6 +11,8 @@ import { StrategyForm } from '@/components/Artifacts/StrategyForm';
 import { ContentBoard } from '@/components/Artifacts/ContentBoard';
 import { ChatColumn } from '@/components/Chat/ChatColumn';
 import type { Phase } from '@/types';
+
+const STORAGE_KEY = 'zeitgeist.session';
 
 const PHASE_LABEL: Record<Phase, string> = {
   intake: 'Intake',
@@ -40,6 +43,15 @@ function ArtifactPanel() {
   }
 }
 
+function handleDemoReset() {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+  window.location.reload();
+}
+
 export default function HomePage() {
   const { session } = useSession();
   return (
@@ -51,8 +63,19 @@ export default function HomePage() {
             brand brain · chat → content
           </span>
         </div>
-        <div className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-          phase: {PHASE_LABEL[session.phase]}
+        <div className="flex items-center gap-2">
+          <div className="rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+            phase: {PHASE_LABEL[session.phase]}
+          </div>
+          <button
+            type="button"
+            onClick={handleDemoReset}
+            title="Reset demo — wipe session and return to intake"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            Reset demo
+          </button>
         </div>
       </header>
       <main className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-[420px_1fr]">
