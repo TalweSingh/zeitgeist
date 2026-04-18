@@ -1,0 +1,101 @@
+{
+  "companyPages": [
+    {
+      "url": "https://lumen.dev/",
+      "text": "Lumen is observability for engineers who ship fast and hate surprises. One agent, one pane: traces, logs, metrics, and cost per request. Install in four minutes. Built by ex-Datadog and ex-Stripe engineers who got tired of dashboards that couldn't answer 'is anything on fire?' in under five seconds."
+    },
+    {
+      "url": "https://lumen.dev/about",
+      "text": "We started Lumen in 2024 after our third all-hands-on-deck outage where the answer lived in a log file nobody thought to open. 30 people. Series A led by Benchmark. Customers: Linear, Vercel, Supabase, Ramp, Modal. We don't sell 'enterprise observability'. We sell on-call sleep."
+    },
+    {
+      "url": "https://lumen.dev/blog/alerts-are-a-product",
+      "text": "Most alert systems treat alerts like log lines: cheap to emit, expensive to ignore. The result is the 3am drive-by page that means nothing. We treat alerts as a product surface. Every rule has to pass one test: would I want this at 3am? Teams that ran Lumen's dedupe saw pager volume drop 63% in the first week."
+    },
+    {
+      "url": "https://lumen.dev/blog/dollars-per-request",
+      "text": "Your dashboards show latency. They don't show dollars. We pin every service to its cost per request because the number that gets you fired is in the finance deck, not the Grafana one. Customers using the cost axis cut cloud spend an average of 22% in their first quarter."
+    },
+    {
+      "url": "https://lumen.dev/careers",
+      "text": "We're hiring four roles into a team of thirty. Remote-first with an SF hub. No cultural fit interviews — we only care if you can ship, care about craft, and can hold a position in a Figma review. Equity bands published. Compensation benchmarked to 75th percentile Levels.fyi."
+    }
+  ],
+  "inspirationProfiles": [
+    {
+      "handle": "@dhh",
+      "channel": "x",
+      "posts": [
+        "37signals: 0 hours of downtime in Q1. Our 'multi-cloud' is one region and a backup. Complexity is optional.",
+        "We moved off AWS. Saved $2M in year one. The cloud bill wasn't the scary part — the lock-in was.",
+        "Shipped Campfire in 6 weeks with 3 people. Anybody who tells you modern web dev has to be slow is selling you a framework."
+      ]
+    },
+    {
+      "handle": "@rauchg",
+      "channel": "x",
+      "posts": [
+        "Vercel deploy P95: 28 seconds. Last year it was 2 minutes. Every second we cut, a PR merges faster somewhere in the world.",
+        "Next.js 15 shipped with 40% faster builds on a typical monorepo. The win wasn't one change — it was 73 small ones.",
+        "The right abstraction collapses three steps into one. The wrong one adds a fourth."
+      ]
+    },
+    {
+      "handle": "@mipsytipsy",
+      "channel": "linkedin",
+      "posts": [
+        "400 alerts a day → 12. Not a tool change. A culture change: every alert had to pass the 3am test.",
+        "Observability 2.0 means high-cardinality by default. If your tool can't pivot on user_id you bought the wrong one.",
+        "The gap between the best on-call rotations and the worst isn't headcount. It's the willingness to delete alerts."
+      ]
+    }
+  ],
+  "searchResults": [
+    {
+      "query": "Lumen observability competitors 2026",
+      "summary": "Lumen is frequently compared to Datadog, Honeycomb, and Grafana Cloud. Differentiator in reviews: cost-per-request axis baked into traces, sub-5-minute install, aggressive alert deduplication. Mentioned in Gartner 2026 Cool Vendors for Observability."
+    },
+    {
+      "query": "Lumen dev pricing",
+      "summary": "Usage-based: $0.25/GB ingested, $0.40/million spans, free tier up to 10GB/month. No seat-based pricing. Enterprise tier includes SSO + audit log + 99.99% SLA."
+    },
+    {
+      "query": "Lumen Series A funding",
+      "summary": "Closed $22M Series A led by Benchmark in October 2025 with participation from Essence VC and angels Guillermo Rauch, Charity Majors, Calvin French-Owen. 30 employees, 200% YoY ARR growth."
+    }
+  ],
+  "jobs": [
+    {
+      "id": "job-backend",
+      "title": "Senior Backend Engineer",
+      "location": "Remote",
+      "team": "Platform",
+      "applyUrl": "https://lumen.dev/careers/senior-backend-eng",
+      "selected": false
+    },
+    {
+      "id": "job-designer",
+      "title": "Product Designer",
+      "location": "San Francisco",
+      "team": "Design",
+      "applyUrl": "https://lumen.dev/careers/product-designer",
+      "selected": false
+    },
+    {
+      "id": "job-growth",
+      "title": "Head of Growth",
+      "location": "Remote",
+      "team": "Growth",
+      "applyUrl": "https://lumen.dev/careers/head-of-growth",
+      "selected": false
+    },
+    {
+      "id": "job-devrel",
+      "title": "Developer Relations Engineer",
+      "location": "Remote",
+      "team": "DevRel",
+      "applyUrl": "https://lumen.dev/careers/devrel",
+      "selected": false
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "id": "h1",
+    "channel": "x",
+    "weekOf": "2026-03-23",
+    "body": "73% of our on-call pages last quarter were duplicates. We shipped a dedupe rule in Lumen and pager volume dropped in a week. Noise is a product bug.",
+    "metrics": { "impressions": 48210, "likes": 412, "reposts": 71, "replies": 38, "bookmarks": 186 },
+    "notes": "won on the hook: concrete 73% stat in the first 10 words before any verb."
+  },
+  {
+    "id": "h2",
+    "channel": "x",
+    "weekOf": "2026-03-23",
+    "body": "In today's world of distributed systems, observability matters more than ever. Here's why every team should care about visibility.",
+    "metrics": { "impressions": 7340, "likes": 22, "reposts": 3, "replies": 1, "bookmarks": 4 },
+    "notes": "flopped: lead with an abstract 'in today's world' opener, zero specificity."
+  },
+  {
+    "id": "h3",
+    "channel": "x",
+    "weekOf": "2026-03-30",
+    "body": "$2.1M burned on tools nobody opened. We audited 14 SaaS logins last month and killed 9. Every dashboard should earn its seat.",
+    "metrics": { "impressions": 61480, "likes": 584, "reposts": 112, "replies": 64, "bookmarks": 241 },
+    "notes": "won on the hook: dollar figure + specific count of 14 inside the first sentence."
+  },
+  {
+    "id": "h4",
+    "channel": "x",
+    "weekOf": "2026-03-30",
+    "body": "What do you think makes a great engineering culture? Would love to hear your thoughts.",
+    "metrics": { "impressions": 4120, "likes": 11, "reposts": 0, "replies": 2, "bookmarks": 1 },
+    "notes": "flopped: generic open-ended question, no stake, no stat, nothing to screenshot."
+  },
+  {
+    "id": "h5",
+    "channel": "x",
+    "weekOf": "2026-04-06",
+    "body": "12 alerts per engineer per week is the break-even line. Above that and MTTR climbs linearly. We measured it across 40 teams on Lumen.",
+    "metrics": { "impressions": 54920, "likes": 478, "reposts": 93, "replies": 44, "bookmarks": 212 },
+    "notes": "won on the hook: '12 alerts' as the first two words, threshold framing invited debate."
+  },
+  {
+    "id": "h6",
+    "channel": "x",
+    "weekOf": "2026-04-06",
+    "body": "Reliability is a journey, not a destination. Every outage teaches us something new about our systems and our teams.",
+    "metrics": { "impressions": 5610, "likes": 18, "reposts": 2, "replies": 0, "bookmarks": 3 },
+    "notes": "flopped: journey/destination platitude with no number, no artifact, no edge."
+  },
+  {
+    "id": "h7",
+    "channel": "x",
+    "weekOf": "2026-04-13",
+    "body": "4 minutes. That's how long it took our on-call to find the bad deploy on Saturday. Six months ago the same incident took 90 minutes. Tools compound.",
+    "metrics": { "impressions": 72390, "likes": 641, "reposts": 138, "replies": 72, "bookmarks": 289 },
+    "notes": "won on the hook: naked '4 minutes.' sentence fragment before any context."
+  },
+  {
+    "id": "h8",
+    "channel": "x",
+    "weekOf": "2026-04-13",
+    "body": "Are you ready to unlock the power of modern observability? Discover how teams are transforming operations.",
+    "metrics": { "impressions": 3890, "likes": 9, "reposts": 1, "replies": 0, "bookmarks": 2 },
+    "notes": "flopped: marketing-copy opener with 'unlock the power', zero concrete hook."
+  },
+  {
+    "id": "h9",
+    "channel": "linkedin",
+    "weekOf": "2026-03-23",
+    "body": "18 months ago we had 400 alerts a day. Today we run 12.\n\nIt wasn't a tool change. It was killing every alert that couldn't pass one test: if this fires at 3am, would I want to be paged?\n\nThe first week we deleted 60% of our rules. MTTR went down, not up. Turns out most alerts were guilt, not signal.\n\nIf your on-call is drowning, the problem isn't the pager. It's the person who keeps adding noise to it.",
+    "metrics": { "impressions": 28400, "likes": 312, "reposts": 44, "replies": 58, "bookmarks": 91 },
+    "notes": "won on the hook: '18 months ago we had 400 alerts' — number + timeframe in first 8 words."
+  },
+  {
+    "id": "h10",
+    "channel": "linkedin",
+    "weekOf": "2026-03-30",
+    "body": "I've been thinking a lot about engineering culture lately. What does it really mean to build a team that cares about quality and outcomes?\n\nIn today's fast-paced environment, the companies that win are the ones that invest in their people and their tools. It's about more than just writing code.\n\nCurious what others think. How are you building culture at your company?",
+    "metrics": { "impressions": 4210, "likes": 16, "reposts": 1, "replies": 4, "bookmarks": 2 },
+    "notes": "flopped: abstract 'engineering culture' opener with no stat, ends on a generic ask."
+  },
+  {
+    "id": "h11",
+    "channel": "linkedin",
+    "weekOf": "2026-04-06",
+    "body": "$840K in cloud spend cut in one quarter. One engineer. One dashboard.\n\nWe built a view in Lumen that pinned every service to its cost per request. Within a week we had three PRs ripping out the worst offenders.\n\nMost observability tools show you what broke. The ones worth paying for show you what's bleeding.\n\nIf your dashboards don't have a dollar axis, you're flying blind on the number that actually gets you fired.",
+    "metrics": { "impressions": 34120, "likes": 386, "reposts": 52, "replies": 71, "bookmarks": 124 },
+    "notes": "won on the hook: '$840K in cloud spend cut' — dollar figure + outcome before anything else."
+  },
+  {
+    "id": "h12",
+    "channel": "linkedin",
+    "weekOf": "2026-04-13",
+    "body": "Every engineer deserves great tools. That's a belief we hold deeply at Lumen.\n\nWe're passionate about empowering developers to do their best work. Observability is at the heart of modern engineering, and we're proud to contribute to the ecosystem.\n\nExcited for what's ahead.",
+    "metrics": { "impressions": 5930, "likes": 24, "reposts": 2, "replies": 3, "bookmarks": 4 },
+    "notes": "flopped: 'every engineer deserves' platitude, no data, no artifact — reads like a LinkedIn bio."
+  }
+]

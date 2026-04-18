@@ -1,0 +1,188 @@
+'use client';
+
+import * as React from 'react';
+import type { Draft } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Twitter, Linkedin, Copy, Send, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useSession } from '@/lib/store/session';
+
+function engagementVariant(e: Draft['predictedEngagement']) {
+  if (e === 'high') return { variant: 'success' as const, label: 'High' };
+  if (e === 'med') return { variant: 'secondary' as const, label: 'Med' };
+  return { variant: 'outline' as const, label: 'Low' };
+}
+
+function fitColor(score: number) {
+  if (score >= 0.85) return 'bg-success';
+  if (score >= 0.7) return 'bg-warning';
+  return 'bg-destructive';
+}
+
+function fitTextColor(score: number) {
+  if (score >= 0.85) return 'text-success';
+  if (score >= 0.7) return 'text-warning';
+  return 'text-destructive';
+}
+
+export function DraftCard({ draft }: { draft: Draft }) {
+  const { setSession } = useSession();
+  const [publishing, setPublishing] = React.useState(false);
+  const [published, setPublished] = React.useState<{ url?: string } | null>(null);
+  const [publishError, setPublishError] = React.useState<string | null>(null);
+  const [copied, setCopied] = React.useState(false);
+
+  const eng = engagementVariant(draft.predictedEngagement);
+  const score = Math.max(0, Math.min(1, draft.brandFitScore ?? 0));
+  const rejected = !!draft.rejected;
+
+  async function publish() {
+    setPublishing(true);
+    setPublishError(null);
+    try {
+      const res = await fetch('/api/channels/x/publish', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ draft })
+      });
+      const json = (await res.json()) as { ok: boolean; url?: string; error?: string };
+      if (json.ok) {
+        setPublished({ url: json.url });
+      } else {
+        setPublishError(json.error ?? 'Publish failed');
+      }
+    } catch (e) {
+      setPublishError(e instanceof Error ? e.message : 'Publish failed');
+    } finally {
+      setPublishing(false);
+    }
+  }
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(draft.body);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+    // fire-and-forget telemetry
+    fetch('/api/channels/linkedin/copy', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: draft.id })
+    }).catch(() => {});
+  }
+
+  function revise() {
+    setSession((prev) => ({
+      ...prev,
+      drafts: prev.drafts.map((d) =>
+        d.id === draft.id ? { ...d, rejected: undefined } : d
+      )
+    }));
+  }
+
+  const ChannelIcon = draft.channel === 'x' ? Twitter : Linkedin;
+
+  return (
+    <div
+      className={cn(
+        'relative flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm transition-all duration-200',
+        rejected ? 'border-destructive' : 'border-border'
+      )}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-1.5 text-muted-foreground">
+          <ChannelIcon className="h-4 w-4" />
+          <span className="text-xs uppercase tracking-wide">
+            {draft.channel === 'x' ? 'X' : 'LinkedIn'}
+          </span>
+          {draft.kind === 'hiring' ? (
+            <Badge variant="outline" className="ml-1 text-[10px]">
+              Hiring
+            </Badge>
+          ) : null}
+        </div>
+        <Badge variant={eng.variant} className="text-[10px]">
+          {eng.label}
+        </Badge>
+      </div>
+
+      <p
+        className={cn(
+          'whitespace-pre-wrap text-sm text-foreground',
+          rejected && 'opacity-70'
+        )}
+      >
+        {draft.body}
+      </p>
+
+      {draft.rationale ? (
+        <div className="text-xs italic text-muted-foreground">
+          Why: {draft.rationale}
+        </div>
+      ) : null}
+
+      <div className="flex items-center gap-2">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+          <div
+            className={cn('h-full transition-all duration-200', fitColor(score))}
+            style={{ width: `${Math.round(score * 100)}%` }}
+          />
+        </div>
+        <span className={cn('text-xs tabular-nums', fitTextColor(score))}>
+          {score.toFixed(2)}
+        </span>
+      </div>
+
+      {rejected && draft.rejected ? (
+        <div className="flex items-start gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-2 text-xs text-destructive">
+          <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>Blocked: {draft.rejected.reason}</span>
+        </div>
+      ) : null}
+
+      <div className="flex items-center justify-end gap-2">
+        {rejected ? (
+          <Button variant="outline" size="sm" onClick={revise}>
+            <RefreshCw className="mr-1 h-3.5 w-3.5" />
+            Revise
+          </Button>
+        ) : draft.channel === 'x' ? (
+          published ? (
+            <Button variant="secondary" size="sm" disabled className="gap-1.5">
+              <span className="text-success">Published ✓</span>
+              {published.url ? (
+                <a
+                  href={published.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center text-muted-foreground hover:text-foreground"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              ) : null}
+            </Button>
+          ) : (
+            <Button size="sm" onClick={publish} disabled={publishing}>
+              <Send className="mr-1 h-3.5 w-3.5" />
+              {publishing ? 'Publishing…' : 'Publish'}
+            </Button>
+          )
+        ) : (
+          <Button variant="outline" size="sm" onClick={copy}>
+            <Copy className="mr-1 h-3.5 w-3.5" />
+            {copied ? 'Copied' : 'Copy'}
+          </Button>
+        )}
+      </div>
+
+      {publishError ? (
+        <div className="text-xs text-destructive">{publishError}</div>
+      ) : null}
+    </div>
+  );
+}

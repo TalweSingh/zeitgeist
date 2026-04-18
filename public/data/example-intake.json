@@ -1,0 +1,19 @@
+{
+  "companyUrl": "https://lumen.dev",
+  "oneLiner": "Observability for engineers who ship fast and hate surprises.",
+  "linkedinHeroes": [
+    "https://linkedin.com/in/jason-fried",
+    "https://linkedin.com/in/dhh",
+    "https://linkedin.com/in/guillermorauch",
+    "https://linkedin.com/in/charity-majors"
+  ],
+  "xHeroes": ["@dhh", "@rauchg", "@levie", "@mipsytipsy"],
+  "favoritePosts": [
+    "$2.1M burned on tools nobody opened. We audited 14 SaaS logins last month and killed 9.",
+    "4 minutes. That's how long it took on-call to find the bad deploy Saturday. Six months ago the same incident took 90.",
+    "12 alerts per engineer per week is the break-even line. Above that and MTTR climbs linearly.",
+    "Every dashboard should earn its seat."
+  ],
+  "audience": "Staff+ backend engineers and SREs at Series A-C startups",
+  "voicePrefs": ["technical", "punchy", "founder-voice"]
+}
