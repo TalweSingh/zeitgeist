@@ -1,12 +1,23 @@
 'use client';
 
 import * as React from 'react';
+import type { InferredIntake } from '@/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { useSession } from '@/lib/store/session';
 import { useDemoMode } from '@/lib/store/demoMode';
-import { CheckCircle2, Loader2, Linkedin, Twitter, Sparkles } from 'lucide-react';
+import {
+  CheckCircle2,
+  Loader2,
+  Linkedin,
+  Twitter,
+  Sparkles,
+  Pencil,
+  X as XIcon,
+  Plus
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const TIMING = {
@@ -26,6 +37,17 @@ export function InferredIntakeCard() {
   const { demoMode } = useDemoMode();
   const inf = session.inferredIntake;
   const approved = session.inferredApproved ?? false;
+  const [editing, setEditing] = React.useState(false);
+
+  const updateInferred = React.useCallback(
+    (patch: Partial<InferredIntake>) => {
+      setSession((prev) => {
+        if (!prev.inferredIntake) return prev;
+        return { ...prev, inferredIntake: { ...prev.inferredIntake, ...patch } };
+      });
+    },
+    [setSession]
+  );
 
   const [audienceFilled, setAudienceFilled] = React.useState(false);
   const [voiceFilled, setVoiceFilled] = React.useState(false);
@@ -102,19 +124,37 @@ export function InferredIntakeCard() {
             We read getclera.com and sketched a starting brief — approve it or tweak.
           </p>
         </div>
-        {allFilled ? (
-          <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-success" />
-        ) : (
-          <Loader2 className="mt-1 h-5 w-5 shrink-0 animate-spin text-muted-foreground" />
-        )}
+        <div className="flex items-center gap-2">
+          {allFilled && !approved ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1 px-2 text-xs"
+              onClick={() => setEditing((v) => !v)}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              {editing ? 'Done' : 'Edit'}
+            </Button>
+          ) : null}
+          {allFilled ? (
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
+          ) : (
+            <Loader2 className="h-5 w-5 shrink-0 animate-spin text-muted-foreground" />
+          )}
+        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <Section
-          title="Audience"
-          filled={audienceFilled}
-        >
+        <Section title="Audience" filled={audienceFilled}>
           {audienceFilled ? (
-            <p className="text-sm text-foreground">{inf.audience}</p>
+            editing ? (
+              <textarea
+                className="min-h-[72px] w-full resize-y rounded-md border border-border bg-background p-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                value={inf.audience}
+                onChange={(e) => updateInferred({ audience: e.target.value })}
+              />
+            ) : (
+              <p className="text-sm text-foreground">{inf.audience}</p>
+            )
           ) : (
             <LineSkeleton />
           )}
@@ -122,13 +162,20 @@ export function InferredIntakeCard() {
 
         <Section title="Voice" filled={voiceFilled}>
           {voiceFilled ? (
-            <div className="flex flex-wrap gap-1.5">
-              {inf.voicePrefs.map((v, i) => (
-                <Badge key={i} variant="secondary" className="text-xs">
-                  {v}
-                </Badge>
-              ))}
-            </div>
+            editing ? (
+              <VoiceEditor
+                values={inf.voicePrefs}
+                onChange={(next) => updateInferred({ voicePrefs: next })}
+              />
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {inf.voicePrefs.map((v, i) => (
+                  <Badge key={i} variant="secondary" className="text-xs">
+                    {v}
+                  </Badge>
+                ))}
+              </div>
+            )
           ) : (
             <LineSkeleton width="w-40" />
           )}
@@ -139,15 +186,12 @@ export function InferredIntakeCard() {
           filled={liCount === 3}
           icon={<Linkedin className="h-3.5 w-3.5" />}
         >
-          <div className="flex flex-col gap-1.5">
-            {inf.linkedinHeroes.map((h, i) =>
-              i < liCount ? (
-                <HeroRow key={h.handle} handle={h.handle} rationale={h.rationale} />
-              ) : (
-                <HeroSkeleton key={`li-s-${i}`} />
-              )
-            )}
-          </div>
+          <HeroList
+            heroes={inf.linkedinHeroes}
+            revealedCount={liCount}
+            editing={editing}
+            onChange={(next) => updateInferred({ linkedinHeroes: next })}
+          />
         </Section>
 
         <Section
@@ -155,32 +199,25 @@ export function InferredIntakeCard() {
           filled={xCount === 3}
           icon={<Twitter className="h-3.5 w-3.5" />}
         >
-          <div className="flex flex-col gap-1.5">
-            {inf.xHeroes.map((h, i) =>
-              i < xCount ? (
-                <HeroRow key={h.handle} handle={h.handle} rationale={h.rationale} />
-              ) : (
-                <HeroSkeleton key={`x-s-${i}`} />
-              )
-            )}
-          </div>
+          <HeroList
+            heroes={inf.xHeroes}
+            revealedCount={xCount}
+            editing={editing}
+            onChange={(next) => updateInferred({ xHeroes: next })}
+          />
         </Section>
 
         <div className="mt-1 flex items-center justify-between border-t border-border pt-3">
           <p className="text-xs text-muted-foreground">
             {approved
               ? 'Approved — brand identity next.'
-              : allFilled
-                ? demoMode
-                  ? 'Auto-approving…'
-                  : 'Ready to approve.'
-                : 'Still inferring…'}
+              : editing
+                ? 'Editing — hit Done when ready.'
+                : allFilled
+                  ? 'Ready to approve.'
+                  : 'Still inferring…'}
           </p>
-          <Button
-            size="sm"
-            disabled={!allFilled || approved}
-            onClick={approve}
-          >
+          <Button size="sm" disabled={!allFilled || approved || editing} onClick={approve}>
             {approved ? 'Approved' : 'Approve'}
           </Button>
         </div>
@@ -223,6 +260,189 @@ function HeroRow({ handle, rationale }: { handle: string; rationale: string }) {
     <div className="animate-in fade-in slide-in-from-bottom-1 duration-300 rounded-md border border-border bg-muted/40 p-2">
       <div className="text-sm font-medium text-foreground">{handle}</div>
       <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{rationale}</p>
+    </div>
+  );
+}
+
+function HeroList({
+  heroes,
+  revealedCount,
+  editing,
+  onChange
+}: {
+  heroes: { handle: string; rationale: string }[];
+  revealedCount: number;
+  editing: boolean;
+  onChange: (next: { handle: string; rationale: string }[]) => void;
+}) {
+  const [newHandle, setNewHandle] = React.useState('');
+  const [newRationale, setNewRationale] = React.useState('');
+
+  if (!editing) {
+    return (
+      <div className="flex flex-col gap-1.5">
+        {heroes.map((h, i) =>
+          i < revealedCount ? (
+            <HeroRow key={`${h.handle}-${i}`} handle={h.handle} rationale={h.rationale} />
+          ) : (
+            <HeroSkeleton key={`s-${i}`} />
+          )
+        )}
+      </div>
+    );
+  }
+
+  function patch(i: number, p: Partial<{ handle: string; rationale: string }>) {
+    onChange(heroes.map((h, idx) => (idx === i ? { ...h, ...p } : h)));
+  }
+
+  function remove(i: number) {
+    onChange(heroes.filter((_, idx) => idx !== i));
+  }
+
+  function add() {
+    const h = newHandle.trim();
+    if (!h) return;
+    onChange([...heroes, { handle: h, rationale: newRationale.trim() }]);
+    setNewHandle('');
+    setNewRationale('');
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {heroes.map((h, i) => (
+        <div
+          key={i}
+          className="flex flex-col gap-1.5 rounded-md border border-border bg-muted/40 p-2"
+        >
+          <div className="flex items-center gap-2">
+            <Input
+              value={h.handle}
+              onChange={(e) => patch(i, { handle: e.target.value })}
+              className="h-7 flex-1 text-sm"
+              placeholder="Handle or name"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+              onClick={() => remove(i)}
+              aria-label={`Remove ${h.handle}`}
+            >
+              <XIcon className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          <textarea
+            className="min-h-[52px] w-full resize-y rounded-md border border-border bg-background p-1.5 text-xs text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            value={h.rationale}
+            onChange={(e) => patch(i, { rationale: e.target.value })}
+            placeholder="Why they fit"
+          />
+        </div>
+      ))}
+
+      <div className="flex flex-col gap-1.5 rounded-md border border-dashed border-border p-2">
+        <div className="flex items-center gap-2">
+          <Input
+            value={newHandle}
+            onChange={(e) => setNewHandle(e.target.value)}
+            className="h-7 flex-1 text-sm"
+            placeholder="Add a hero…"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                add();
+              }
+            }}
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 gap-1 px-2"
+            onClick={add}
+            disabled={!newHandle.trim()}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add
+          </Button>
+        </div>
+        {newHandle.trim() ? (
+          <textarea
+            className="min-h-[48px] w-full resize-y rounded-md border border-border bg-background p-1.5 text-xs text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            value={newRationale}
+            onChange={(e) => setNewRationale(e.target.value)}
+            placeholder="Why they fit (optional)"
+          />
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function VoiceEditor({
+  values,
+  onChange
+}: {
+  values: string[];
+  onChange: (next: string[]) => void;
+}) {
+  const [draft, setDraft] = React.useState('');
+  function add() {
+    const v = draft.trim();
+    if (!v || values.includes(v)) {
+      setDraft('');
+      return;
+    }
+    onChange([...values, v]);
+    setDraft('');
+  }
+  function remove(v: string) {
+    onChange(values.filter((x) => x !== v));
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-1.5">
+        {values.map((v) => (
+          <span
+            key={v}
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-xs text-foreground"
+          >
+            {v}
+            <button
+              type="button"
+              onClick={() => remove(v)}
+              className="text-muted-foreground hover:text-destructive"
+              aria-label={`Remove ${v}`}
+            >
+              <XIcon className="h-3 w-3" />
+            </button>
+          </span>
+        ))}
+      </div>
+      <div className="flex items-center gap-2">
+        <Input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          className="h-7 flex-1 text-sm"
+          placeholder="Add a voice trait…"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              add();
+            }
+          }}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 gap-1 px-2"
+          onClick={add}
+          disabled={!draft.trim()}
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Add
+        </Button>
+      </div>
     </div>
   );
 }

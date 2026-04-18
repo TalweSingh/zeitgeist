@@ -14,7 +14,10 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  TrendingUp
+  TrendingUp,
+  Pencil,
+  Check,
+  X as XIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSession } from '@/lib/store/session';
@@ -54,6 +57,29 @@ export function DraftCard({ draft }: { draft: Draft }) {
   const [publishError, setPublishError] = React.useState<string | null>(null);
   const [copied, setCopied] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
+  const [editing, setEditing] = React.useState(false);
+  const [editBody, setEditBody] = React.useState(draft.body);
+
+  function startEdit() {
+    setEditBody(draft.body);
+    setEditing(true);
+  }
+  function cancelEdit() {
+    setEditBody(draft.body);
+    setEditing(false);
+  }
+  function saveEdit() {
+    const body = editBody.trim();
+    if (!body) {
+      setEditing(false);
+      return;
+    }
+    setSession((prev) => ({
+      ...prev,
+      drafts: prev.drafts.map((d) => (d.id === draft.id ? { ...d, body } : d))
+    }));
+    setEditing(false);
+  }
 
   const eng = engagementVariant(draft.predictedEngagement);
   const score = Math.max(0, Math.min(1, draft.brandFitScore ?? 0));
@@ -136,19 +162,53 @@ export function DraftCard({ draft }: { draft: Draft }) {
             </Badge>
           ) : null}
         </div>
-        <Badge variant={eng.variant} className="text-[10px]">
-          {eng.label}
-        </Badge>
+        <div className="flex items-center gap-1.5">
+          {!editing ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 gap-1 px-1.5 text-[10px] text-muted-foreground hover:text-foreground"
+              onClick={startEdit}
+              aria-label="Edit draft"
+            >
+              <Pencil className="h-3 w-3" />
+              Edit
+            </Button>
+          ) : null}
+          <Badge variant={eng.variant} className="text-[10px]">
+            {eng.label}
+          </Badge>
+        </div>
       </div>
 
-      <p
-        className={cn(
-          'whitespace-pre-wrap text-sm text-foreground',
-          rejected && 'opacity-70'
-        )}
-      >
-        {draft.body}
-      </p>
+      {editing ? (
+        <div className="flex flex-col gap-2">
+          <textarea
+            value={editBody}
+            onChange={(e) => setEditBody(e.target.value)}
+            className="min-h-[120px] w-full resize-y rounded-md border border-border bg-background p-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <Button variant="ghost" size="sm" className="h-7 gap-1 px-2 text-xs" onClick={cancelEdit}>
+              <XIcon className="h-3.5 w-3.5" />
+              Cancel
+            </Button>
+            <Button size="sm" className="h-7 gap-1 px-2 text-xs" onClick={saveEdit}>
+              <Check className="h-3.5 w-3.5" />
+              Save
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <p
+          className={cn(
+            'whitespace-pre-wrap text-sm text-foreground',
+            rejected && 'opacity-70'
+          )}
+        >
+          {draft.body}
+        </p>
+      )}
 
       {draft.rationale ? (
         <div className="text-xs italic text-muted-foreground">Why: {draft.rationale}</div>
