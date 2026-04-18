@@ -1,8 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Sparkles } from 'lucide-react';
 import { useSession } from '@/lib/store/session';
+import { useDemoMode } from '@/lib/store/demoMode';
 import { IntakeBuilder } from '@/components/Artifacts/IntakeBuilder';
 import { ResearchLog } from '@/components/Artifacts/ResearchLog';
 import { JobsReview } from '@/components/Artifacts/JobsReview';
@@ -54,6 +55,7 @@ function handleDemoReset() {
 
 export default function HomePage() {
   const { session } = useSession();
+  const { demoMode, setDemoMode } = useDemoMode();
   return (
     <div className="flex h-screen flex-col">
       <header className="flex h-14 items-center justify-between border-b border-border bg-background px-6">
@@ -69,12 +71,26 @@ export default function HomePage() {
           </div>
           <button
             type="button"
+            onClick={() => setDemoMode(!demoMode)}
+            title={demoMode ? 'Demo mode on — auto-advancing through phases' : 'Demo mode off — manual steps'}
+            className={
+              'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition ' +
+              (demoMode
+                ? 'border-accent/60 bg-accent/10 text-accent-foreground hover:bg-accent/20'
+                : 'border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground')
+            }
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Demo mode {demoMode ? 'on' : 'off'}
+          </button>
+          <button
+            type="button"
             onClick={handleDemoReset}
             title="Reset demo — wipe session and return to intake"
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Reset demo
+            Reset
           </button>
         </div>
       </header>

@@ -11,19 +11,36 @@ export function LoopHeader() {
   const { session } = useSession();
   const {
     learnings,
-    simulated,
+    simulatedWeek,
     simulate,
     forecastMultiplier,
     weeksSpan,
-    history
+    history,
+    findings
   } = useContentBoard();
 
   const drafts = session.drafts ?? [];
   const rejected = drafts.filter((d) => d.rejected).length;
-  const forecastLabel =
-    forecastMultiplier >= 1
+  const simulated = simulatedWeek > 0;
+  const buttonLabel =
+    simulatedWeek === 0
+      ? 'Simulate week 1'
+      : simulatedWeek === 1
+      ? 'Simulate week 2'
+      : 'Simulated';
+  const forecastLabel = (() => {
+    if (simulatedWeek === 2 && findings) {
+      const combined = (findings.week2AppliedAvg + findings.week2UnappliedAvg) / 2 || forecastMultiplier;
+      return `${combined.toFixed(2)}\u00d7 W2`;
+    }
+    if (simulatedWeek === 1 && findings) {
+      const combined = (findings.week1AppliedAvg + findings.week1UnappliedAvg) / 2 || forecastMultiplier;
+      return `${combined.toFixed(2)}\u00d7 W1`;
+    }
+    return forecastMultiplier >= 1
       ? `+${forecastMultiplier.toFixed(1)}\u00d7 avg`
       : `${forecastMultiplier.toFixed(1)}\u00d7 avg`;
+  })();
 
   return (
     <div className="relative mb-4 overflow-hidden rounded-lg border border-border bg-card p-4">
@@ -39,13 +56,13 @@ export function LoopHeader() {
         </div>
         <Button
           size="sm"
-          variant={simulated ? 'secondary' : 'default'}
+          variant={simulatedWeek >= 2 ? 'secondary' : 'default'}
           onClick={simulate}
-          disabled={simulated || drafts.length === 0}
+          disabled={simulatedWeek >= 2 || drafts.length === 0}
           className="gap-1.5"
         >
           <PlayCircle className="h-3.5 w-3.5" />
-          {simulated ? 'Simulated' : 'Simulate next week'}
+          {buttonLabel}
         </Button>
       </div>
 

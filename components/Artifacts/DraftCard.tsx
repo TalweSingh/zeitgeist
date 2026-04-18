@@ -165,20 +165,39 @@ export function DraftCard({ draft }: { draft: Draft }) {
       </div>
 
       {sim && !rejected ? (
-        <div className="flex items-center justify-between rounded-md border border-accent/40 bg-accent/5 px-2 py-1.5 text-[11px]">
-          <div className="flex items-center gap-1.5 text-accent-foreground">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-medium">Next week forecast</span>
+        <div className="flex flex-col gap-1 rounded-md border border-accent/40 bg-accent/5 px-2 py-1.5 text-[11px]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-accent-foreground">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span className="font-medium">Week 1 forecast</span>
+            </div>
+            <div className="flex gap-2 tabular-nums text-muted-foreground">
+              <span>{sim.week1.impressions.toLocaleString()} imp</span>
+              <span>{sim.week1.likes.toLocaleString()} likes</span>
+              <span>{sim.week1.reposts} rp</span>
+              <span className={cn(sim.week1.delta >= 1 ? 'text-success' : 'text-warning')}>
+                {sim.week1.delta >= 1 ? '+' : ''}
+                {sim.week1.delta.toFixed(2)}×
+              </span>
+            </div>
           </div>
-          <div className="flex gap-2 tabular-nums text-muted-foreground">
-            <span>{sim.impressions.toLocaleString()} imp</span>
-            <span>{sim.likes.toLocaleString()} likes</span>
-            <span>{sim.reposts} rp</span>
-            <span className={cn(sim.delta >= 1 ? 'text-success' : 'text-warning')}>
-              {sim.delta >= 1 ? '+' : ''}
-              {sim.delta.toFixed(2)}×
-            </span>
-          </div>
+          {sim.week2 ? (
+            <div className="flex items-center justify-between border-t border-accent/20 pt-1">
+              <div className="flex items-center gap-1.5 text-accent-foreground">
+                <TrendingUp className="h-3.5 w-3.5" />
+                <span className="font-medium">Week 2 forecast</span>
+              </div>
+              <div className="flex gap-2 tabular-nums text-muted-foreground">
+                <span>{sim.week2.impressions.toLocaleString()} imp</span>
+                <span>{sim.week2.likes.toLocaleString()} likes</span>
+                <span>{sim.week2.reposts} rp</span>
+                <span className={cn(sim.week2.delta >= sim.week1.delta ? 'text-success' : 'text-warning')}>
+                  {sim.week2.delta >= sim.week1.delta ? '+' : ''}
+                  {(sim.week2.delta / Math.max(sim.week1.delta, 0.01)).toFixed(2)}× vs W1
+                </span>
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

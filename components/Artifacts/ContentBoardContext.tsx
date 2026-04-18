@@ -5,11 +5,26 @@ import type { Draft, Learning, PerformanceRecord } from '@/types';
 import { useLearnings } from './_hooks/useLearnings';
 import { useSession } from '@/lib/store/session';
 
-export type SimulatedMetrics = {
+export type WeekMetrics = {
   impressions: number;
   likes: number;
   reposts: number;
-  delta: number; // vs channel history avg engagement ratio
+  delta: number; // factor vs channel history avg
+};
+
+export type SimulatedMetrics = {
+  week1: WeekMetrics;
+  week2: WeekMetrics | null;
+};
+
+export type SimulationFindings = {
+  appliedCount: number;
+  unappliedCount: number;
+  week1AppliedAvg: number;
+  week1UnappliedAvg: number;
+  week2AppliedAvg: number;
+  week2UnappliedAvg: number;
+  topInsight: string | null;
 };
 
 type Ctx = {
@@ -17,7 +32,7 @@ type Ctx = {
   learningsLoading: boolean;
   selectedLearningIdx: number | null;
   setSelectedLearningIdx: (i: number | null) => void;
-  simulated: boolean;
+  simulatedWeek: 0 | 1 | 2;
   simulate: () => void;
   getSimulatedMetrics: (draft: Draft) => SimulatedMetrics | null;
   learningApplies: (draft: Draft, learningIdx: number) => boolean;
@@ -26,6 +41,7 @@ type Ctx = {
   history: PerformanceRecord[];
   weeksSpan: number;
   forecastMultiplier: number;
+  findings: SimulationFindings | null;
 };
 
 const ContentBoardCtx = React.createContext<Ctx | null>(null);
@@ -70,9 +86,11 @@ export function ContentBoardProvider({ children }: { children: React.ReactNode }
   );
   const { learnings, loading } = useLearnings(history);
   const [selectedLearningIdx, setSelectedLearningIdx] = React.useState<number | null>(null);
-  const [simulated, setSimulated] = React.useState(false);
+  const [simulatedWeek, setSimulatedWeek] = React.useState<0 | 1 | 2>(0);
 
-  const simulate = React.useCallback(() => setSimulated(true), []);
+  const simulate = React.useCallback(() => {
+    setSimulatedWeek((w) => (w >= 2 ? 2 : ((w + 1) as 0 | 1 | 2)));
+  }, []);
 
   // Derived weekly span.
   const weeksSpan = React.useMemo(() => {
@@ -96,27 +114,7 @@ export function ContentBoardProvider({ children }: { children: React.ReactNode }
     return acc;
   }, [history]);
 
-  const getSimulatedMetrics = React.useCallback(
-    (draft: Draft): SimulatedMetrics | null => {
-      if (!simulated) return null;
-      const c = channelAvg[draft.channel];
-      if (!c || c.n === 0) return null;
-      const mult =
-        draft.predictedEngagement === 'high' ? 2.1 : draft.predictedEngagement === 'med' ? 1.15 : 0.55;
-      const rng = seededRng(djb2(draft.id));
-      const jitter = 0.9 + rng() * 0.25;
-      const factor = mult * jitter;
-      return {
-        impressions: Math.round((c.imp / c.n) * factor),
-        likes: Math.round((c.likes / c.n) * factor),
-        reposts: Math.round((c.rep / c.n) * factor),
-        delta: factor
-      };
-    },
-    [simulated, channelAvg]
-  );
-
-  const learningApplies = React.useCallback(
+  const learningApplies0 = React.useCallback(
     (draft: Draft, idx: number): boolean => {
       const l = learnings[idx];
       if (!l) return false;
@@ -125,15 +123,56 @@ export function ContentBoardProvider({ children }: { children: React.ReactNode }
     [learnings]
   );
 
-  const getAppliedLearningIdx = React.useCallback(
+  const getAppliedLearningIdx0 = React.useCallback(
     (draft: Draft): number | null => {
       for (let i = 0; i < learnings.length; i++) {
-        if (learningApplies(draft, i)) return i;
+        if (learningApplies0(draft, i)) return i;
       }
       return null;
     },
-    [learnings, learningApplies]
+    [learnings, learningApplies0]
   );
+
+  const getSimulatedMetrics = React.useCallback(
+    (draft: Draft): SimulatedMetrics | null => {
+      if (simulatedWeek === 0) return null;
+      const c = channelAvg[draft.channel];
+      if (!c || c.n === 0) return null;
+      const mult =
+        draft.predictedEngagement === 'high' ? 2.1 : draft.predictedEngagement === 'med' ? 1.15 : 0.55;
+      const rng = seededRng(djb2(draft.id));
+      const jitter = 0.9 + rng() * 0.25;
+      const factor1 = mult * jitter;
+      const w1: WeekMetrics = {
+        impressions: Math.round((c.imp / c.n) * factor1),
+        likes: Math.round((c.likes / c.n) * factor1),
+        reposts: Math.round((c.rep / c.n) * factor1),
+        delta: factor1
+      };
+      let w2: WeekMetrics | null = null;
+      if (simulatedWeek === 2) {
+        // Learning-applied drafts get a 1.35x boost in week 2 (the brain
+        // re-weights them); unapplied drafts decay to 0.88x. Layered with
+        // a second seeded jitter so numbers feel organic.
+        const applied = getAppliedLearningIdx0(draft) !== null;
+        const rng2 = seededRng(djb2(draft.id + '-w2'));
+        const jitter2 = 0.92 + rng2() * 0.2;
+        const boost = applied ? 1.35 : 0.88;
+        const factor2 = factor1 * boost * jitter2;
+        w2 = {
+          impressions: Math.round((c.imp / c.n) * factor2),
+          likes: Math.round((c.likes / c.n) * factor2),
+          reposts: Math.round((c.rep / c.n) * factor2),
+          delta: factor2
+        };
+      }
+      return { week1: w1, week2: w2 };
+    },
+    [simulatedWeek, channelAvg, getAppliedLearningIdx0]
+  );
+
+  const learningApplies = learningApplies0;
+  const getAppliedLearningIdx = getAppliedLearningIdx0;
 
   const getEvidenceRecords = React.useCallback(
     (idx: number): PerformanceRecord[] => {
@@ -161,12 +200,62 @@ export function ContentBoardProvider({ children }: { children: React.ReactNode }
     return sum / usable.length;
   }, [session.drafts]);
 
+  // Findings: aggregate stats that power the narrative panel after simulation.
+  const findings = React.useMemo<SimulationFindings | null>(() => {
+    if (simulatedWeek === 0) return null;
+    const drafts = (session.drafts ?? []).filter((d) => !d.rejected);
+    if (drafts.length === 0) return null;
+    const applied: Draft[] = [];
+    const unapplied: Draft[] = [];
+    for (const d of drafts) {
+      if (getAppliedLearningIdx0(d) !== null) applied.push(d);
+      else unapplied.push(d);
+    }
+    const avg = (arr: Draft[], week: 1 | 2): number => {
+      if (arr.length === 0) return 0;
+      let sum = 0;
+      let n = 0;
+      for (const d of arr) {
+        const m = getSimulatedMetrics(d);
+        const pick = week === 1 ? m?.week1 : m?.week2;
+        if (pick) {
+          sum += pick.delta;
+          n++;
+        }
+      }
+      return n === 0 ? 0 : sum / n;
+    };
+    // Top insight = most-applied learning across drafts.
+    const counts = new Map<number, number>();
+    for (const d of drafts) {
+      const idx = getAppliedLearningIdx0(d);
+      if (idx !== null) counts.set(idx, (counts.get(idx) ?? 0) + 1);
+    }
+    let topIdx: number | null = null;
+    let topCount = 0;
+    for (const [idx, c] of counts) {
+      if (c > topCount) {
+        topIdx = idx;
+        topCount = c;
+      }
+    }
+    return {
+      appliedCount: applied.length,
+      unappliedCount: unapplied.length,
+      week1AppliedAvg: avg(applied, 1),
+      week1UnappliedAvg: avg(unapplied, 1),
+      week2AppliedAvg: simulatedWeek === 2 ? avg(applied, 2) : 0,
+      week2UnappliedAvg: simulatedWeek === 2 ? avg(unapplied, 2) : 0,
+      topInsight: topIdx !== null ? learnings[topIdx]?.insight ?? null : null
+    };
+  }, [simulatedWeek, session.drafts, getAppliedLearningIdx0, getSimulatedMetrics, learnings]);
+
   const value: Ctx = {
     learnings,
     learningsLoading: loading,
     selectedLearningIdx,
     setSelectedLearningIdx,
-    simulated,
+    simulatedWeek,
     simulate,
     getSimulatedMetrics,
     learningApplies,
@@ -174,7 +263,8 @@ export function ContentBoardProvider({ children }: { children: React.ReactNode }
     getEvidenceRecords,
     history,
     weeksSpan,
-    forecastMultiplier
+    forecastMultiplier,
+    findings
   };
 
   return <ContentBoardCtx.Provider value={value}>{children}</ContentBoardCtx.Provider>;
